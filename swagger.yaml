@@ -1,0 +1,493 @@
+swagger: '2.0'
+info:
+  version: "1.0.0"
+  title: OneOffice.API
+  contact:
+    email: support@oneoffice.ebix.com
+  description: >-
+    
+    # Introduction
+    
+    OneOffice provides REST APIs to enable access to perform Life Policy Adminstration functions which includes but not limited to Created, Update and Retrieve Customer and Policy Information,  Manage Benefits, Retrieve Transactions & Diary Events, Handling Payments and Periodic Debits and Claims Management.  
+
+    
+    The APIs are having a predictable resource URLs and APIs expect and produce JSON payloads to perform all these mentioned operations.  You can use your favorite HTTP/REST library for your programming language to use OneOffice APIs.
+    
+    <br/><br/>
+    
+    # Authentication
+    
+    OneOffice APIs  offers following authentication mechanism 
+      - **Basic Auth** - only available for existing OneOffice internal accounts. Use your username and password.
+    
+    <br/><br/>
+    
+    # Getting Started
+    
+    Once a valid account is registered by OneOffice support staff the credentials will be shared to consumers. This will contain a username and password to authenticate. User will have to access the **/Login/Auth** endpoint for posting the provided credentials. 
+    <br/>
+    
+    After validating the accuracy of the provided username/password, API will generate an access token (Bearer token) which will be passed in subsequenct API's request header.     
+    
+    Please refer to **/Login/Auth** request/response model examples for more details on how to obtain an access token. 
+    
+    ```Note
+      OneOffice APIs use HTTPS protocol to secure the communication between client and API services.
+    ```
+    
+# host: '127.0.0.1'
+# basePath: '/OneOffice/API/v1'
+schemes:
+  - https
+
+securityDefinitions:
+  basicAuth:
+    type: basic
+
+security:
+  - basicAuth: []
+paths:
+  /Login/Auth:
+    post:
+      tags:
+        - Authenticate
+      description: The endpoint allows to generate an authentication token for the given user credentials. Generated token will then be used to be passed as a bearer token in the subsequent API requests
+      
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: authRequest
+          in: body
+          required: true
+          description: The request payload will be provided in this  object which contains user name, password and domain information.
+          schema:
+            $ref: '#/definitions/AuthenticationModel'  
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GenericTokenModel'
+          examples:
+            success:
+              {
+                  "data": {
+                    "accessToken": "GHKJOWERXXG=09923348[234SW{[...",
+                    },
+                "metadata": {
+                "status": "Success",
+                "errors": []
+                }
+              }
+        '401':
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/GenericTokenModel'
+          examples:
+            application/json: 
+              { 
+                "data": {},
+                "metadata": {
+                  "status": "Failure", 
+                  "errors": []
+              }}         
+        
+  /Quote/Calculation:
+    post:
+      tags:
+        - PricingCalculation
+      description: This API is used to provide insurance quotes. It accepts a body object which includes an array of lives insured and their associated benefits as input. The response of this API yields a similar array that includes the associated costs (premium for each available payment frequency as well as stamp duty) against each life & benefit.
+      
+      consumes:
+        - application/json
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: quoteRequest
+          in: body
+          required: true
+          description: The request payload will be provided in this nested object containing the general quote information along with an arrary of lives insured. Each live will contains one or many benefits to get the policy pricing details. 
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/QuoteRequestModel'
+            example:
+              [{
+                "applicationDate": "2019-06-02T23:07:43.407Z",
+                "productCode": "CKF",
+                "applicationSource": "HCF Mobile App",
+                "identity": [
+                  {
+                    "dateOfBirth": "1989-10-10",
+                    "genderCode": "M",
+                    "identitySequence": 1,
+                    "residentStateCode": "NSW",
+                    "residentCountryCode": "AUS",
+                    "smokerStatusCode": "L",
+                    "benefit": [{
+                        "benefitCode": "TR1",
+                        "benefitSequence": 1,
+                        "cpi": true,
+                        "insuranceAmount": 50000,
+                        "loadDuration": 0,
+                        "medicalAssessLoading": 0,
+                        "medicalPerMilleLoading": 0,
+                        "occupationalAssessLoading": 0,
+                        "occupationalPerMilleLoading": 0,
+                        "premiumTypeCode": "S",
+                        "recreationalAssessLoading": 0,
+                        "recreationalPerMilleLoading": 0,
+                        "superContributionAmount": 0
+                      }]
+                  }]
+              }]
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/GenericResponseModel'
+          examples:
+            success example: 
+              {
+                "data": [{
+                  "identitySequence": 1,
+                  "benefitSequence": 1,
+                  "frequencies": [{
+                    "type": "Weekly",
+                    "premium": 240,
+                    "stampduty": 0,
+                    "policyFee": 0,
+                    "totalPremium": 240
+                    },
+                    {
+                      "type": "Quarterly",
+                      "premium": 65,
+                      "stampduty": 0,
+                      "policyFee": 0,
+                      "totalPremium": 65
+                    },
+                    {
+                      "type": "Monthly",
+                      "premium": 21.65,
+                      "stampduty": 0,
+                      "policyFee": 0,
+                      "totalPremium": 21.65
+                  }]
+                }],
+              "metadata": {
+              "status": "Success",
+              "errors": []
+              }
+            }
+            failure example : 
+              { 
+                "data": {},
+                "metadata": {
+                  "status": "Failure", 
+                  "errors": [{
+                    "code": "400",
+                    "description": "Product Code not found"
+                    
+                  }]
+              }}      
+              
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/GenericResponseModel'
+          examples:
+            application/json: 
+              { 
+                "data": {},
+                "metadata": {
+                  "status": "Failure", 
+                  "errors": []
+              }}  
+              
+        '401':
+          description: Not authorized
+          schema:
+            $ref: '#/definitions/GenericResponseModel'
+          examples:
+            application/json: 
+              { 
+                "data": {},
+                "metadata": {
+                  "status": "Failure", 
+                  "errors": []
+              }}  
+             
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/GenericResponseModel'
+          examples:
+            application/json: 
+              { 
+                "data": {},
+                "metadata": {
+                  "status": "Failure", 
+                  "errors": []
+              }}  
+             
+          
+definitions:
+  QuoteRequestModel:
+    type: object
+    required:
+      - applicationDate
+      - productCode
+      - identity
+    properties:
+      applicationDate:
+        description: This describes the effective date for calculating a pricing quote
+        format: date-time
+        type: string
+      productCode:
+        description: To specify a product code for pricing calculation
+        type: string
+      applicationSource:
+        description: The source of an application, its an optional field
+        type: string
+      identity:
+        type: array
+        description: This specifies an array of life entities along with benefit list for pricing calculation
+        items:
+          $ref: '#/definitions/IdentityModel'
+  
+  IdentityModel:
+    type: object
+    required:
+      - dateOfBirth
+      - gender
+      - benefit
+    properties:
+      dateOfBirth:
+        format: date
+        type: string
+        description: Date of birth associated with the life entity
+      genderCode:
+        type: string
+        description: Gender code of life entity
+        enum: [M, F]
+      identitySequence:
+        format: int32
+        type: integer
+        description: This depicts the life's unique sequence number being passed by the caller for request/response correlation. This can be ommitted in case of a single life
+      occupationCode:
+        type: string
+        description: This expects the occupation code of the life entity being supplied
+      occupationCategoryCode:
+        type: string 
+        description: This expects the occupation category code against provided occupation for life entity
+      residentStateCode:
+        type: string
+        description: State Code of life entity being provided. This defaults to 'NSW' in case not supplied 
+      residentCountryCode:
+        type: string
+        description: Country Code of life entity being provided. This defaults to 'AUS' in case not supplied 
+      smokerStatusCode:
+        type: string
+        description: This depicts the smoker status of the provided life entity. This is an enum which represents following values
+          * L - Never Smoked
+          * N - Non Smoker
+          * S - Smoker
+        enum: [L, N, S]
+      benefit:
+        type: array
+        description: This provides the list of benefits against a life entity to get the pricing calculation
+        items:
+          $ref: '#/definitions/BenefitModel'    
+      
+  BenefitModel:
+    type: object
+    required:
+      - benefitCode
+      - premiumType
+      - insuranceAmount
+    properties:    
+      benefitCode:
+        type: string
+        description: This represents the benefit code against which the quotation pricing is required to be calculated
+      benefitSequence:
+        format: int32
+        type: integer
+        description: This depicts the benefit's unique sequence number for a specific life being passed by the caller for request/response correlation. This can be ommitted in case of a single benefit in a specific life entity
+      benefitPeriodCode:
+        type: string
+        description: This is only applicable to Income Protection benefits, it represents the period any benefit is expected to be paid  
+      cpi:
+        type: boolean
+        description: This is a boolean flag to depict the consumer price index. This will be considered as True if not supplied 
+      fundingType:
+        type: string
+        description: This represents the funding type
+      height:
+        format: double
+        type: number
+        description: This represent height of the life entity in centimeters. Its required for Income Protection benefit types
+      insuranceAmount:
+        format: double
+        type: number
+        description: To specify total insurance amount which will be used to calculate the premium results
+      loadDuration:
+        format: int32
+        type: integer
+        description: This specifies the duration of loadings
+      medicalAssessLoading:
+        format: double
+        type: number
+        description: To represent medical loading to be applied to the calculated premiums
+      medicalPerMilleLoading:
+        format: double
+        type: number
+        description: To represent per mille medical loading to be applied to the calculated premiums
+      occupationalAssessLoading:
+        format: double
+        type: number
+        description: To represent occupational access loading to be applied to the calculated premiums
+      occupationalPerMilleLoading:
+        format: double
+        type: number
+        description: To specify per mille occupational loading to be applied to the calculated premiums
+      premiumTypeCode:
+        type: string  
+        description: This field represents the premium type i.e. L=Level, S=Stepped, H=Hybrid 
+      premiumWaiverOption:
+        type: string
+        description: This represents any waiver option to be specified on premiums
+      premiumDialDownPercent:
+        format: double
+        type: number
+        description: To specify any dialdown percentage applicable to the calculated premiums
+      recreationalAssessLoading:
+        format: double
+        type: number
+        description: To represent any recreational loading to be applied to the calculated premiums
+      recreationalPerMilleLoading:
+        format: double
+        type: number
+        description: To represent per mille recreational loading to be applied to the calculated premiums
+      superContributionAmount:
+        format: double
+        type: number
+        description: To specify super contribution amount which will be summed in the insured amount to calculate the results
+      waitingPeriodCode:
+        type: string  
+        description: This is only applicable to Income Protection benefits, it represents the waiting period before payments can be initiated  
+      weight:
+        format: double
+        type: number
+        description: This represent weight of the life entity in kilograms. Its required for Income Protection benefit types
+  
+  GenericResponseModel:
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/ResultsModel'
+      metadata:
+        $ref: '#/definitions/GenericErrorModel'
+      
+  ResultsModel:
+    type: object
+    properties:
+      identitySequence:
+        format: int32
+        type: integer
+        description: This depicts the life's unique sequence number being passed by the caller for request/response correlation  
+      benefitSequence:
+        format: int32
+        type: integer
+        description: This represents the benefit's unique sequence number  being passed by the caller for request/response correlation
+      frequencies:
+        type: array
+        description: An array of multiple premium frequencies along with the premium calculation results
+        items:
+          $ref: '#/definitions/CalculationResults'
+        
+  CalculationResults:
+    type: object
+    properties:
+      type:
+        type: string
+        enum: [Weekly, Fortnightly, FourWeekly, Monthly, Quarterly, HalfYearly, Yearly]
+        description: This represents the premium frequency against the generated results. Only the frequencies associated with requested Product and Benefit will be returned by calculation engine 
+      premium:
+        format: double
+        type: number
+        description: The calculated insurance premium against the given premium frequency  
+      stampduty:
+        format: double
+        type: number
+        description: The calculated stamp duty amount against the premium frequency  
+      policyFee:
+        format: double
+        type: number
+        description: The calculated policy administration fee for the premium frequency  
+      totalPremium:
+        format: double
+        type: number
+        description: This represents the total net premium amount to be paid
+        
+  GenericErrorModel:
+    type: object
+    properties:
+      status:     
+        type: string
+        enum: [Failure, Success]
+        description: An Enum representing Success or Failure in the current API call being made
+      errors:
+        type: array
+        description: This depicts an array of error codes and associated descriptions. This will null for Success status
+        items:
+          $ref: '#/definitions/ErrorModel'
+      
+  ErrorModel:
+    type: object
+    properties:    
+      code:
+        type: string
+        description: A unique code associated with each custom error throw by APIs
+      description:
+        type: string
+        description: This represents the detailed error description for diagnosis
+       
+        
+  AuthenticationModel:
+    type: object
+    required:
+      - userName
+      - password
+    properties:    
+      userName:
+        type: string
+        description: This specifies the unique user name for getting the access token
+      password:
+        type: string   
+        description: This specifies the password associated with user  for getting the access token
+      domain:
+        type: string 
+        description: To specify the user's domain
+  
+  GenericTokenModel:
+    type: object
+    properties:
+      data:
+          $ref: '#/definitions/TokenModel'
+      metadata:
+        $ref: '#/definitions/GenericErrorModel'
+        
+  TokenModel:
+    type: object
+    properties:    
+      accessToken:
+        type: string
+        description: An access token represnt an arbitrary string being generated by API services.
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /tahirshahzad/OneOfficeAPIs/1.0.0
