@@ -1,525 +1,2250 @@
 {
-  "swagger" : "2.0",
+  "openapi" : "3.0.0",
   "info" : {
-    "description" : "\n# Introduction\nOneOffice provides REST APIs to enable access to perform Life Policy Adminstration functions which includes but not limited to Created, Update and Retrieve Customer and Policy Information,  Manage Benefits, Retrieve Transactions & Diary Events, Handling Payments and Periodic Debits and Claims Management.  \n\nThe APIs are having a predictable resource URLs and APIs expect and produce JSON payloads to perform all these mentioned operations.  You can use your favorite HTTP/REST library for your programming language to use OneOffice APIs.\n<br/><br/>\n# Authentication\nOneOffice APIs  offers following authentication mechanism \n  - **Basic Auth** - only available for existing OneOffice internal accounts. Use your username and password.\n\n<br/><br/>\n# Getting Started\nOnce a valid account is registered by OneOffice support staff the credentials will be shared to consumers. This will contain a username and password to authenticate. User will have to access the **/Login/Auth** endpoint for posting the provided credentials.  <br/>\nAfter validating the accuracy of the provided username/password, API will generate an access token (Bearer token) which will be passed in subsequenct API's request header.     \nPlease refer to **/Login/Auth** request/response model examples for more details on how to obtain an access token. \n```Note\n  OneOffice APIs use HTTPS protocol to secure the communication between client and API services.\n```",
-    "version" : "1.0.0",
     "title" : "OneOffice.API",
+    "description" : "\n# Introduction\nOneOffice provides REST APIs to enable access to perform Life Policy Administration functions which includes but not limited to Create, Update and Retrieve Customers, Create and Maintain Policies, Manage Benefits, Retrieve Transactions & Diary Events, Handling Payments, Handling Periodic Debits and Claims Management.  \n\nThe APIs are having a predictable resource URLs and APIs expect and produce JSON payloads to perform all these mentioned operations.  You can use your favorite HTTP/REST library for your programming language to use OneOffice APIs.\n\n# Authentication\nOneOffice APIs  offers following authentication mechanism \n  - **OAuth 2.0** - OneOffice APIs would follow the OAuth2.0 with the client credentials flow. A client_id and client_secret will be issued to the consumer of APIs in order to obtain access token. This token will then be included in request header as a bearer token for subsequest API requests. The generated tokens will have an expiry period (in minutes) after which a fresh token will be needed by caller of API.   \n\n\n# Getting Started\nOnce a valid account is registered by OneOffice support staff the corresponding details will be shared to consumers. This will contain a client_id and client_secret to obtain an access toekn. Consumer application will have to access the **/Auth/Token** endpoint for posting the provided credentials. \nAfter validating the accuracy of the provided client_id/client_secret, API will generate an access token (Bearer token) which will be passed in subsequent API's request headers.     \nPlease refer to **/Auth/Token** request/response model examples for more details on how to obtain an access token. \n```Note\n  OneOffice APIs use HTTPS protocol to secure the communication between client and API services.\n```",
     "contact" : {
-      "email" : "support@oneoffice.ebix.com"
+      "url" : "https://www.ebix.com.au/contact/contact-form"
+    },
+    "license" : {
+      "name" : "Ebix Australia Pty",
+      "url" : "https://www.ebix.com.au"
+    },
+    "version" : "1.0.0-oas3",
+    "x-logo" : {
+      "url" : "http://localhost:31906/Static/Images/OneOffice.png"
     }
   },
-  "host" : "virtserver.swaggerhub.com",
-  "basePath" : "/tahirshahzad/OneOfficeAPIs/1.0.0",
-  "schemes" : [ "https" ],
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/tahirshahzad/OneOfficeAPIs/1.0.0"
+  } ],
   "security" : [ {
-    "basicAuth" : [ ]
+    "OAuth2" : [ ]
   } ],
   "paths" : {
-    "/Login/Auth" : {
+    "/auth/token" : {
       "post" : {
         "tags" : [ "Authenticate" ],
-        "description" : "The endpoint allows to generate an authentication token for the given user credentials. Generated token will then be used to be passed as a bearer token in the subsequent API requests",
-        "consumes" : [ "application/json", "application/x-www-form-urlencoded" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "authRequest",
+        "summary" : "To obtain an Authentication Token",
+        "description" : "The endpoint allows to generate an authentication token for the given user credentials. Generated token will then be used to be passed as a bearer token in the subsequent API requests\n",
+        "requestBody" : {
           "description" : "The request payload will be provided in this  object which contains user name, password and domain information.",
-          "required" : true,
-          "schema" : {
-            "$ref" : "#/definitions/AuthenticationModel"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "OK",
-            "examples" : {
-              "success" : {
-                "data" : {
-                  "accessToken" : "GHKJOWERXXG=09923348[234SW{[..."
-                },
-                "metadata" : {
-                  "status" : "Success",
-                  "errors" : [ ]
-                }
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AuthenticationModel"
               }
             },
-            "schema" : {
-              "$ref" : "#/definitions/GenericTokenModel"
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AuthenticationModel"
+              }
             }
           },
-          "401" : {
-            "description" : "Not authorized",
-            "examples" : {
-              "application/json" : {
-                "data" : { },
-                "metadata" : {
-                  "status" : "Failure",
-                  "errors" : [ ]
-                }
-              }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/GenericTokenModel"
-            }
-          }
-        }
-      }
-    },
-    "/Quote/Calculation" : {
-      "post" : {
-        "tags" : [ "PricingCalculation" ],
-        "description" : "This API is used to provide insurance quotes. It accepts a body object which includes an array of lives insured and their associated benefits as input. The response of this API yields a similar array that includes the associated costs (premium for each available payment frequency as well as stamp duty) against each life & benefit.",
-        "consumes" : [ "application/json", "application/x-www-form-urlencoded" ],
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "in" : "body",
-          "name" : "quoteRequest",
-          "description" : "The request payload will be provided in this nested object containing the general quote information along with an arrary of lives insured. Each live will contains one or many benefits to get the policy pricing details.",
-          "required" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/definitions/QuoteRequestModel"
-            },
-            "example" : [ {
-              "applicationDate" : "2019-06-02T23:07:43.407Z",
-              "productCode" : "CKF",
-              "applicationSource" : "HCF Mobile App",
-              "identity" : [ {
-                "dateOfBirth" : "1989-10-10",
-                "genderCode" : "M",
-                "identitySequence" : 1,
-                "residentStateCode" : "NSW",
-                "residentCountryCode" : "AUS",
-                "smokerStatusCode" : "L",
-                "benefit" : [ {
-                  "benefitCode" : "TR1",
-                  "benefitSequence" : 1,
-                  "cpi" : true,
-                  "insuranceAmount" : 50000,
-                  "loadDuration" : 0,
-                  "medicalAssessLoading" : 0,
-                  "medicalPerMilleLoading" : 0,
-                  "occupationalAssessLoading" : 0,
-                  "occupationalPerMilleLoading" : 0,
-                  "premiumTypeCode" : "S",
-                  "recreationalAssessLoading" : 0,
-                  "recreationalPerMilleLoading" : 0,
-                  "superContributionAmount" : 0
-                } ]
-              } ]
-            } ]
-          }
-        } ],
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "description" : "OK",
-            "examples" : {
-              "success example" : {
-                "data" : [ {
-                  "identitySequence" : 1,
-                  "benefitSequence" : 1,
-                  "frequencies" : [ {
-                    "type" : "Weekly",
-                    "premium" : 240,
-                    "stampduty" : 0,
-                    "policyFee" : 0,
-                    "totalPremium" : 240
-                  }, {
-                    "type" : "Quarterly",
-                    "premium" : 65,
-                    "stampduty" : 0,
-                    "policyFee" : 0,
-                    "totalPremium" : 65
-                  }, {
-                    "type" : "Monthly",
-                    "premium" : 21.65,
-                    "stampduty" : 0,
-                    "policyFee" : 0,
-                    "totalPremium" : 21.65
-                  } ]
-                } ],
-                "metadata" : {
-                  "status" : "Success",
-                  "errors" : [ ]
-                }
-              },
-              "failure example" : {
-                "data" : { },
-                "metadata" : {
-                  "status" : "Failure",
-                  "errors" : [ {
-                    "code" : "400",
-                    "description" : "Product Code not found"
-                  } ]
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericTokenModel"
+                },
+                "examples" : {
+                  "success" : {
+                    "value" : {
+                      "data" : {
+                        "access_token" : "GHKJOWERXXG=09923348[234SW{[...",
+                        "token_type" : "bearer",
+                        "expires_in" : 14399
+                      },
+                      "metadata" : {
+                        "status" : "Success",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
                 }
               }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/GenericResponseModel"
             }
           },
           "400" : {
             "description" : "Bad Request",
-            "examples" : {
+            "content" : {
               "application/json" : {
-                "data" : { },
-                "metadata" : {
-                  "status" : "Failure",
-                  "errors" : [ ]
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
                 }
               }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/GenericResponseModel"
             }
           },
           "401" : {
             "description" : "Not authorized",
-            "examples" : {
+            "content" : {
               "application/json" : {
-                "data" : { },
-                "metadata" : {
-                  "status" : "Failure",
-                  "errors" : [ ]
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
                 }
               }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/GenericResponseModel"
             }
           },
           "500" : {
             "description" : "Internal Server Error",
-            "examples" : {
+            "content" : {
               "application/json" : {
-                "data" : { },
-                "metadata" : {
-                  "status" : "Failure",
-                  "errors" : [ ]
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
                 }
               }
-            },
-            "schema" : {
-              "$ref" : "#/definitions/GenericResponseModel"
+            }
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/quote/calculation" : {
+      "post" : {
+        "tags" : [ "PricingCalculation" ],
+        "summary" : "To Generate a Pricing Quote",
+        "description" : "This API is used to provide insurance quotes. It accepts a body object which includes an array of lives insured and their associated benefits as input. The response of this API yields a similar array that includes the associated costs (premium for each available payment frequency as well as stamp duty) against each life & benefit.\n",
+        "requestBody" : {
+          "description" : "The request payload will be provided in this nested object containing the general quote information along with an arrary of lives insured. Each live will contains one or many benefits to get the policy pricing details.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "$ref" : "#/components/schemas/QuoteRequestModel"
+                }
+              },
+              "examples" : {
+                "Example 1" : {
+                  "value" : [ {
+                    "applicationDate" : "2019-06-02T23:07:43.407Z",
+                    "productCode" : "CKF",
+                    "applicationSource" : "",
+                    "registerStateCode" : "NSW",
+                    "identity" : [ {
+                      "dateOfBirth" : "1989-10-10",
+                      "genderCode" : "M",
+                      "identitySequence" : 1,
+                      "smokerStatusCode" : "L",
+                      "benefit" : [ {
+                        "benefitCode" : "TR1",
+                        "benefitSequence" : 1,
+                        "insuranceAmount" : 50000,
+                        "loadDuration" : 0,
+                        "medicalAssessLoading" : 0,
+                        "medicalPerMilleLoading" : 0,
+                        "occupationalAssessLoading" : 0,
+                        "occupationalPerMilleLoading" : 0,
+                        "premiumTypeCode" : "S",
+                        "recreationalAssessLoading" : 0,
+                        "recreationalPerMilleLoading" : 0
+                      } ]
+                    } ]
+                  } ]
+                },
+                "Example 3" : {
+                  "value" : [ {
+                    "applicationDate" : "2019-05-06T23:07:43.407Z",
+                    "productCode" : "TDX",
+                    "applicationSource" : "",
+                    "registerStateCode" : "NSW",
+                    "identity" : [ {
+                      "dateOfBirth" : "1989-10-10",
+                      "genderCode" : "M",
+                      "identitySequence" : 1,
+                      "smokerStatusCode" : "S",
+                      "benefit" : [ {
+                        "benefitCode" : "DT1",
+                        "benefitSequence" : 1,
+                        "insuranceAmount" : 850450,
+                        "loadDuration" : 0,
+                        "medicalAssessLoading" : 0,
+                        "medicalPerMilleLoading" : 0,
+                        "occupationalAssessLoading" : 0,
+                        "occupationalPerMilleLoading" : 0,
+                        "premiumTypeCode" : "S",
+                        "recreationalAssessLoading" : 0,
+                        "recreationalPerMilleLoading" : 0
+                      } ]
+                    }, {
+                      "dateOfBirth" : "1989-10-10",
+                      "genderCode" : "M",
+                      "identitySequence" : 2,
+                      "smokerStatusCode" : "N",
+                      "benefit" : [ {
+                        "benefitCode" : "DT1",
+                        "benefitSequence" : 1,
+                        "insuranceAmount" : 750000,
+                        "loadDuration" : 0,
+                        "medicalAssessLoading" : 0,
+                        "medicalPerMilleLoading" : 0,
+                        "occupationalAssessLoading" : 0,
+                        "occupationalPerMilleLoading" : 0,
+                        "premiumTypeCode" : "S",
+                        "recreationalAssessLoading" : 0,
+                        "recreationalPerMilleLoading" : 0
+                      } ]
+                    } ]
+                  } ]
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CalculateResponseModel"
+                },
+                "examples" : {
+                  "success example" : {
+                    "value" : {
+                      "data" : [ {
+                        "identitySequence" : 1,
+                        "benefitSequence" : 1,
+                        "calculationResults" : [ {
+                          "frequencyType" : "Weekly",
+                          "premium" : 240,
+                          "stampduty" : 0,
+                          "policyFee" : 0,
+                          "totalPremium" : 240
+                        }, {
+                          "frequencyType" : "Quarterly",
+                          "premium" : 65,
+                          "stampduty" : 0,
+                          "policyFee" : 0,
+                          "totalPremium" : 65
+                        }, {
+                          "frequencyType" : "Monthly",
+                          "premium" : 21.65,
+                          "stampduty" : 0,
+                          "policyFee" : 0,
+                          "totalPremium" : 21.65
+                        } ]
+                      } ],
+                      "metadata" : {
+                        "status" : "Success",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not authorized",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessable Entity",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ {
+                          "code" : "400",
+                          "description" : "Product Code not found"
+                        } ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies" : {
+      "post" : {
+        "tags" : [ "Policy" ],
+        "summary" : "To Create a Life Policy",
+        "description" : "The endpoint is used to create a life policy. It accepts a body object which includes policy general details, benefits and reference to one or more identities available in OneOffice . The response of this API is a unique Policy No. being generated.\n",
+        "requestBody" : {
+          "description" : "The request payload will be provided in this object which contains policy information along with identities, relationships and benefits per life insured",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PolicyRequestModel"
+              },
+              "examples" : {
+                "Example 1" : {
+                  "value" : {
+                    "applicationDate" : "2019-04-24T02:23:12.200Z",
+                    "applicationSource" : "",
+                    "firstBillingDate" : "2019-04-24",
+                    "isCPI" : true,
+                    "isSTP" : true,
+                    "productCode" : "TDX",
+                    "premiumFrequencyCode" : "W",
+                    "registerStateCode" : "NSW",
+                    "userName" : "paulw",
+                    "identity" : [ {
+                      "identityType" : "Individual",
+                      "identityReference" : "SF-01290",
+                      "identityAltReference" : "NH-11231",
+                      "dateOfBirth" : "1980-06-17",
+                      "firstName" : "Johnny",
+                      "genderCode" : "M",
+                      "identitySequence" : 1,
+                      "lastName" : "Mihalis",
+                      "occupationCode" : "OC006",
+                      "smokerStatusCode" : "N",
+                      "titleCode" : 2,
+                      "contact" : {
+                        "homePhone" : "024569817",
+                        "mobilePhone" : "049878123",
+                        "email" : "jmihalis@yahoo.com",
+                        "contactMethodCode" : "C",
+                        "correspondenceMethodCode" : "E"
+                      },
+                      "residentialAddress" : {
+                        "streetAddress" : "12A Homebush Bay Dr",
+                        "suburb" : "Rhodes",
+                        "postcode" : 2111,
+                        "stateCode" : "NSW",
+                        "countryCode" : "AUS"
+                      },
+                      "relationship" : [ {
+                        "relationshipCode" : "INSR",
+                        "isFinancialDependent" : false
+                      }, {
+                        "relationshipCode" : "CLNT",
+                        "isFinancialDependent" : false
+                      } ],
+                      "benefit" : [ {
+                        "benefitCode" : "DT1",
+                        "benefitSequence" : 1,
+                        "insuranceAmount" : 250000,
+                        "loadDuration" : 0,
+                        "medicalAssessLoading" : 0,
+                        "medicalPerMilleLoading" : 0,
+                        "occupationalAssessLoading" : 0,
+                        "occupationalPerMilleLoading" : 0,
+                        "premiumTypeCode" : "S",
+                        "premiumDialDownPercent" : 0,
+                        "recreationalAssessLoading" : 0,
+                        "recreationalPerMilleLoading" : 0
+                      } ]
+                    } ],
+                    "account" : [ {
+                      "paymentType" : "B",
+                      "bankBSB" : "623560",
+                      "accountName" : "Johnny Mihalis",
+                      "accountNumber" : 123456789
+                    } ]
+                  }
+                },
+                "Example 2" : {
+                  "value" : {
+                    "applicationDate" : "2019-06-13T02:23:12.200Z",
+                    "applicationSource" : "",
+                    "firstBillingDate" : "2019-06-13",
+                    "isCPI" : true,
+                    "isSTP" : true,
+                    "productCode" : "CKF",
+                    "premiumFrequencyCode" : "W",
+                    "registerStateCode" : "NSW",
+                    "userName" : "sarahp",
+                    "identity" : [ {
+                      "identityType" : "Individual",
+                      "identityId" : 2231,
+                      "dateOfBirth" : "1980-06-13",
+                      "firstName" : "Sara",
+                      "genderCode" : "F",
+                      "identitySequence" : 1,
+                      "lastName" : "Parker",
+                      "occupationCode" : "OC006",
+                      "smokerStatusCode" : "L",
+                      "titleCode" : 2,
+                      "contact" : {
+                        "homePhone" : "024569817",
+                        "mobilePhone" : "049878123",
+                        "email" : "sparker@gmail.com",
+                        "contactMethodCode" : "C",
+                        "correspondenceMethodCode" : "E"
+                      },
+                      "residentialAddress" : {
+                        "streetAddress" : "12A Homebush Bay Dr",
+                        "suburb" : "Rhodes",
+                        "postcode" : 2111,
+                        "stateCode" : "NSW",
+                        "countryCode" : "AUS"
+                      },
+                      "relationship" : [ {
+                        "relationshipCode" : "INSR",
+                        "isFinancialDependent" : false
+                      }, {
+                        "relationshipCode" : "CLNT",
+                        "isFinancialDependent" : false
+                      } ],
+                      "benefit" : [ {
+                        "benefitCode" : "TR1",
+                        "benefitSequence" : 1,
+                        "insuranceAmount" : 250000,
+                        "loadDuration" : 0,
+                        "medicalAssessLoading" : 0,
+                        "medicalPerMilleLoading" : 0,
+                        "occupationalAssessLoading" : 0,
+                        "occupationalPerMilleLoading" : 0,
+                        "premiumTypeCode" : "L",
+                        "premiumDialDownPercent" : 0,
+                        "recreationalAssessLoading" : 0,
+                        "recreationalPerMilleLoading" : 0
+                      } ]
+                    }, {
+                      "identityType" : "Individual",
+                      "identityReference" : "SF-01291",
+                      "identityAltReference" : "NH-11232",
+                      "dateOfBirth" : "1986-06-13",
+                      "firstName" : "Jessica",
+                      "genderCode" : "F",
+                      "identitySequence" : 1,
+                      "lastName" : "Mihalis",
+                      "occupationCode" : "OC008",
+                      "smokerStatusCode" : "N",
+                      "titleCode" : 1,
+                      "contact" : {
+                        "homePhone" : "024569817",
+                        "mobilePhone" : "049878124",
+                        "email" : "jmihalis1@yahoo.com",
+                        "contactMethodCode" : "C",
+                        "correspondenceMethodCode" : "E"
+                      },
+                      "residentialAddress" : {
+                        "streetAddress" : "12A Homebush Bay Dr",
+                        "suburb" : "Rhodes",
+                        "postcode" : 2111,
+                        "stateCode" : "NSW",
+                        "countryCode" : "AUS"
+                      },
+                      "relationship" : [ {
+                        "relationshipCode" : "FAMM",
+                        "isFinancialDependent" : false
+                      } ]
+                    }, {
+                      "identityType" : "Individual",
+                      "identityReference" : "SF-01299",
+                      "identityAltReference" : "NH-11288",
+                      "dateOfBirth" : "2000-06-13",
+                      "firstName" : "William",
+                      "genderCode" : "M",
+                      "identitySequence" : 1,
+                      "lastName" : "Mihalis",
+                      "smokerStatusCode" : "N",
+                      "titleCode" : 2,
+                      "contact" : {
+                        "homePhone" : "024569817",
+                        "mobilePhone" : "049878128",
+                        "email" : "wmihalis@yahoo.com",
+                        "contactMethodCode" : "C",
+                        "correspondenceMethodCode" : "E"
+                      },
+                      "residentialAddress" : {
+                        "streetAddress" : "12A Homebush Bay Dr",
+                        "suburb" : "Rhodes",
+                        "postcode" : 2111,
+                        "stateCode" : "NSW",
+                        "countryCode" : "AUS"
+                      },
+                      "relationship" : [ {
+                        "relationshipCode" : "FAMM",
+                        "isFinancialDependent" : true
+                      } ]
+                    }, {
+                      "identityType" : "Individual",
+                      "identityReference" : "SF-01298",
+                      "identityAltReference" : "NH-11277",
+                      "dateOfBirth" : "2014-06-08",
+                      "firstName" : "Audrey",
+                      "genderCode" : "F",
+                      "identitySequence" : 1,
+                      "lastName" : "Mihalis",
+                      "smokerStatusCode" : "N",
+                      "titleCode" : 1,
+                      "contact" : {
+                        "homePhone" : "024569817",
+                        "email" : "jmihalis@yahoo.com",
+                        "contactMethodCode" : "C",
+                        "correspondenceMethodCode" : "E"
+                      },
+                      "residentialAddress" : {
+                        "streetAddress" : "12A Homebush Bay Dr",
+                        "suburb" : "Rhodes",
+                        "postcode" : 2111,
+                        "stateCode" : "NSW",
+                        "countryCode" : "AUS"
+                      },
+                      "relationship" : [ {
+                        "relationshipCode" : "FAMM",
+                        "isFinancialDependent" : true
+                      } ]
+                    } ],
+                    "account" : [ {
+                      "paymentType" : "B",
+                      "bankBSB" : "623-560",
+                      "accountName" : "John Mihalis",
+                      "accountNumber" : 98808782378
+                    } ]
+                  }
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PolicyResponseModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "data" : {
+                        "policyNumber" : "TDX10000159",
+                        "identity" : [ {
+                          "identityId" : 2231,
+                          "identityReference" : "SF-01290",
+                          "identityAltReference" : "NH-11231"
+                        } ]
+                      },
+                      "metadata" : {
+                        "status" : "Success"
+                      }
+                    }
+                  },
+                  "Example 2" : {
+                    "value" : {
+                      "data" : {
+                        "policyNumber" : "IA110000159",
+                        "identity" : [ {
+                          "identityId" : 4411,
+                          "identityReference" : "SF-01290",
+                          "identityAltReference" : "NH-11231"
+                        }, {
+                          "identityId" : 2236,
+                          "identityReference" : "SF-01299",
+                          "identityAltReference" : "NH-11233"
+                        } ]
+                      },
+                      "metadata" : {
+                        "status" : "Success"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not authorized",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessable Entity",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ {
+                          "code" : "P100",
+                          "description" : "IdentityId '2231' not found in OneOffice"
+                        } ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/{id}/summary" : {
+      "get" : {
+        "tags" : [ "Policy" ],
+        "summary" : "To Fetch Life Policy Summary",
+        "description" : "The endpoint is used to fetch a life policy summary information. It accepts PolicyNo as path parameter available in OneOffice.  The response is policy summary object being returned\n",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "OneOffice policy number to fetch the summary information ",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PolicySummaryModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "effectiveDate" : "2019-07-02",
+                      "endDate" : "",
+                      "isCPI" : true,
+                      "isPD" : true,
+                      "originalCreationDate" : "2019-07-02",
+                      "originalIssueDate" : "2019-07-02",
+                      "product" : {
+                        "code" : "TDX",
+                        "description" : "Smart Term"
+                      },
+                      "premiumFrequency" : {
+                        "code" : "W",
+                        "description" : "Weekly"
+                      },
+                      "premiumPauseStartDate" : "",
+                      "premiumPauseEndDate" : "",
+                      "registerState" : {
+                        "code" : "NSW",
+                        "description" : "New South Wales"
+                      },
+                      "renewalDate" : "2020-07-02",
+                      "status" : {
+                        "code" : 1,
+                        "description" : "In force"
+                      },
+                      "statusDate" : "2019-07-02T07:27:25.004Z",
+                      "identity" : [ {
+                        "identityType" : "Individual",
+                        "identityId" : 11234,
+                        "identityReference" : "",
+                        "dateOfBirth" : "1985-07-02",
+                        "firstName" : "John",
+                        "gender" : {
+                          "code" : "M",
+                          "description" : "Male"
+                        },
+                        "lastName" : "Bolton",
+                        "smokerStatus" : {
+                          "code" : "S",
+                          "description" : "Smoker"
+                        },
+                        "title" : {
+                          "code" : 1,
+                          "description" : "Mr."
+                        },
+                        "relationship" : [ {
+                          "type" : {
+                            "code" : "INSR",
+                            "description" : "Life Insured"
+                          }
+                        } ],
+                        "benefit" : [ {
+                          "type" : {
+                            "code" : "DT1",
+                            "description" : "Death Benefit"
+                          },
+                          "effectiveDate" : "2019-07-02",
+                          "endDate" : "2019-07-02",
+                          "insuranceAmount" : 50000,
+                          "modalPremiumAmount" : 8.5,
+                          "paidToDate" : "2019-07-03",
+                          "premiumType" : {
+                            "code" : "S",
+                            "description" : "Stepped"
+                          },
+                          "status" : {
+                            "code" : 1,
+                            "description" : "In force"
+                          },
+                          "statusDate" : "2019-07-02T07:27:25.004Z"
+                        } ]
+                      } ],
+                      "segment" : [ {
+                        "segmentType" : {
+                          "code" : "MS01",
+                          "description" : "Assetless Segment"
+                        },
+                        "segmentBalance" : 0.5
+                      } ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not authorized",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessable Entity",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ {
+                          "code" : "P100",
+                          "description" : "PolicyNo 'TDX01223455' not found in OneOffice"
+                        } ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/payments" : {
+      "post" : {
+        "tags" : [ "Policy" ],
+        "summary" : "To Initiate a Payment Request",
+        "description" : "This endpoint is used to initialize a payment requrest against a policy available in OneOffice. System will firstly verifiy the policy number and status before processing this request. Policies with 'Enforce' and 'Pending-Lapsed' status will accept these adhoc payments. Upon successful validation, system will add balance amount in policy segment balance and will execute charges function to generate insurance transactions. This would yeild an updated paid to date along with a revised next debit date (if applicable).         API accepts a body object which includes policy number, paid amount and a preferred charges run date. \nThe response of this API is segment balance and next debit date\n",
+        "requestBody" : {
+          "description" : "The request payload will be provided in this object which contains policy number and amount to be paid ",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PaymentRequestModel"
+              },
+              "examples" : {
+                "Example 1" : {
+                  "value" : {
+                    "policyNumber" : "TDX10000159",
+                    "paidAmount" : 13.5,
+                    "chargesRunToDate" : "2019-08-31"
+                  }
+                },
+                "Example 2" : {
+                  "value" : {
+                    "policyNumber" : "IA110000160",
+                    "paidAmount" : 15,
+                    "chargesRunToDate" : "2019-08-31"
+                  }
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "data" : {
+                        "policyNumber" : "TDX10000159",
+                        "balanceBefore" : 3,
+                        "balanceAfter" : 1.5,
+                        "paidToDateBefore" : "2019-06-30",
+                        "paidToDateAfter" : "2019-07-31",
+                        "nextDebitDate" : "2019-08-31"
+                      },
+                      "metadata" : {
+                        "status" : "Success"
+                      }
+                    }
+                  },
+                  "Example 2" : {
+                    "value" : {
+                      "data" : {
+                        "policyNumber" : "IA110000160",
+                        "balanceBefore" : 0,
+                        "balanceAfter" : 15,
+                        "paidToDateBefore" : "2019-04-30",
+                        "paidToDateAfter" : "2019-05-31",
+                        "nextDebitDate" : "2019-06-31"
+                      },
+                      "metadata" : {
+                        "status" : "Success"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not authorized",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessable Entity",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ {
+                          "code" : "P200",
+                          "description" : "Policy number 'TDX10000122' is not having a valid status to accept payments"
+                        } ]
+                      }
+                    }
+                  },
+                  "Example 2" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ {
+                          "code" : "P201",
+                          "description" : "Policy number 'TDX10000122' is not found in OneOffice"
+                        } ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/policies/{id}/payments/history" : {
+      "get" : {
+        "tags" : [ "Policy" ],
+        "summary" : "To get a list of Payment history",
+        "description" : "blah",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "OneOffice policy number to fetch the history payment information  ",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "data" : {
+                        "policyNumber" : "TDX10000159",
+                        "balanceBefore" : 3,
+                        "balanceAfter" : 1.5,
+                        "paidToDateBefore" : "2019-06-30",
+                        "paidToDateAfter" : "2019-07-31",
+                        "nextDebitDate" : "2019-08-31"
+                      },
+                      "metadata" : {
+                        "status" : "Success"
+                      }
+                    }
+                  },
+                  "Example 2" : {
+                    "value" : {
+                      "data" : {
+                        "policyNumber" : "IA110000160",
+                        "balanceBefore" : 0,
+                        "balanceAfter" : 15,
+                        "paidToDateBefore" : "2019-04-30",
+                        "paidToDateAfter" : "2019-05-31",
+                        "nextDebitDate" : "2019-06-31"
+                      },
+                      "metadata" : {
+                        "status" : "Success"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Not authorized",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessable Entity",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "Example 1" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ {
+                          "code" : "P200",
+                          "description" : "Policy number 'TDX10000122' is not having a valid status to accept payments"
+                        } ]
+                      }
+                    }
+                  },
+                  "Example 2" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ {
+                          "code" : "P201",
+                          "description" : "Policy number 'TDX10000122' is not found in OneOffice"
+                        } ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GenericResponseModel"
+                },
+                "examples" : {
+                  "response" : {
+                    "value" : {
+                      "data" : { },
+                      "metadata" : {
+                        "status" : "Failure",
+                        "errors" : [ ]
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
     }
   },
-  "securityDefinitions" : {
-    "basicAuth" : {
-      "type" : "basic"
-    }
-  },
-  "definitions" : {
-    "QuoteRequestModel" : {
-      "type" : "object",
-      "required" : [ "applicationDate", "identity", "productCode" ],
-      "properties" : {
-        "applicationDate" : {
-          "type" : "string",
-          "format" : "date-time",
-          "description" : "This describes the effective date for calculating a pricing quote"
+  "components" : {
+    "schemas" : {
+      "QuoteRequestModel" : {
+        "required" : [ "applicationDate", "identity", "productCode" ],
+        "type" : "object",
+        "properties" : {
+          "applicationDate" : {
+            "type" : "string",
+            "description" : "This describes the effective date for calculating a pricing quote",
+            "format" : "date-time"
+          },
+          "productCode" : {
+            "type" : "string",
+            "description" : "To specify a product code for pricing calculation"
+          },
+          "applicationSource" : {
+            "type" : "string",
+            "description" : "This identifies the application origination source to pick the appropriate rates for white branding"
+          },
+          "registerStateCode" : {
+            "type" : "string",
+            "description" : "State Code for the purpose of stamp duty calculation. This defaults to 'NSW' in case not supplied"
+          },
+          "identity" : {
+            "type" : "array",
+            "description" : "This specifies an array of life entities along with benefit list for pricing calculation",
+            "items" : {
+              "$ref" : "#/components/schemas/IdentityModel"
+            }
+          }
+        }
+      },
+      "PolicyRequestModel" : {
+        "required" : [ "applicationDate", "identity", "isCPI", "premiumFrequencyCode", "productCode" ],
+        "type" : "object",
+        "properties" : {
+          "applicationDate" : {
+            "type" : "string",
+            "description" : "This describes the effective date for creating a policy",
+            "format" : "date-time"
+          },
+          "applicationSource" : {
+            "type" : "string",
+            "description" : "This identifies the application origination source to pick the appropriate rates for white branding "
+          },
+          "firstBillingDate" : {
+            "type" : "string",
+            "description" : "This specifies the nominated first billing date for the premium payments of life policy",
+            "format" : "date"
+          },
+          "isCPI" : {
+            "type" : "boolean",
+            "description" : "This is a boolean flag to depict the consumer price index"
+          },
+          "isSTP" : {
+            "type" : "boolean",
+            "description" : "This flag identifies whether straight through processing is required. 'Yes', would result in the policy being created and issued whereas 'No' would result the policy to be created in Proposal state"
+          },
+          "productCode" : {
+            "type" : "string",
+            "description" : "To specify a product code for pricing calculation"
+          },
+          "premiumFrequencyCode" : {
+            "type" : "string",
+            "description" : "This represents the premium frequency for premium payments. As each product can have different frequencies configured, consumer must pass on the correct frequency code * W - Weekly * F - Fortnightly * 4 - FourWeekly * M - Monthly * Q - Quarterly * H - HalfYearly * Y - Yearly",
+            "enum" : [ "W", "F", "4", "M", "Q", "H", "Y" ]
+          },
+          "registerStateCode" : {
+            "type" : "string",
+            "description" : "Register state code for stamp duty calculations with in policy to be issued. This defaults to 'NSW' in case not supplied"
+          },
+          "userName" : {
+            "type" : "string",
+            "description" : "Name of the user who creates the policy"
+          },
+          "identity" : {
+            "type" : "array",
+            "description" : "This specifies an array of life entities along with policy relationships and benefit list for premium calculation",
+            "items" : {
+              "$ref" : "#/components/schemas/IdentityExtendedModel"
+            }
+          },
+          "account" : {
+            "type" : "array",
+            "description" : "One or more periodic debit accounts to fund the policy premiums",
+            "items" : {
+              "$ref" : "#/components/schemas/AccountModel"
+            }
+          }
+        }
+      },
+      "CodeDescriptionModel" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "This describes the code field "
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "This describes the description field    "
+          }
+        }
+      },
+      "PolicySummaryModel" : {
+        "type" : "object",
+        "properties" : {
+          "effectiveDate" : {
+            "type" : "string",
+            "description" : "This describes the effective date of the policy",
+            "format" : "date"
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "This describes the end date of the policy",
+            "format" : "date"
+          },
+          "isCPI" : {
+            "type" : "boolean",
+            "description" : "This is a boolean flag to depict whether CPI is opted in or not  "
+          },
+          "isPD" : {
+            "type" : "boolean",
+            "description" : "This is a boolean flag to depict whether periodic debit is available or not  "
+          },
+          "originalCreationDate" : {
+            "type" : "string",
+            "description" : "This describes the original creation date of the policy",
+            "format" : "date"
+          },
+          "originalIssueDate" : {
+            "type" : "string",
+            "description" : "This describes the original issue date of the policy which can be different than original creation date",
+            "format" : "date"
+          },
+          "product" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "premiumFrequency" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "premiumPauseStartDate" : {
+            "type" : "string",
+            "description" : "This describes the date at which premium is being paused against the policy",
+            "format" : "date"
+          },
+          "premiumPauseEndDate" : {
+            "type" : "string",
+            "description" : "This describes the date when premium pause is ending against the policy",
+            "format" : "date"
+          },
+          "registerState" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "renewalDate" : {
+            "type" : "string",
+            "description" : "This represents the date at which policy is being renewed     ",
+            "format" : "date"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "statusDate" : {
+            "type" : "string",
+            "description" : "This represents the date at which policy status is changed     ",
+            "format" : "date-time"
+          },
+          "identity" : {
+            "type" : "array",
+            "description" : "This specifies an array of life entities along with policy relationships and benefit list",
+            "items" : {
+              "$ref" : "#/components/schemas/IdentityFetchModel"
+            }
+          },
+          "segment" : {
+            "type" : "array",
+            "description" : "One or more periodic debit accounts to fund the policy premiums",
+            "items" : {
+              "$ref" : "#/components/schemas/SegmentModel"
+            }
+          }
+        }
+      },
+      "IdentityModel" : {
+        "required" : [ "benefit", "dateOfBirth", "genderCode" ],
+        "type" : "object",
+        "properties" : {
+          "dateOfBirth" : {
+            "type" : "string",
+            "description" : "Date of birth associated with the life entity",
+            "format" : "date"
+          },
+          "genderCode" : {
+            "type" : "string",
+            "description" : "Gender code of life entity",
+            "enum" : [ "M", "F" ]
+          },
+          "identitySequence" : {
+            "type" : "integer",
+            "description" : "This depicts the life's unique sequence number being passed by the caller for request/response correlation. This can be ommitted in case of a single life",
+            "format" : "int32"
+          },
+          "occupationCode" : {
+            "type" : "string",
+            "description" : "This expects the occupation code of the life entity being supplied"
+          },
+          "occupationCategoryCode" : {
+            "type" : "string",
+            "description" : "This expects the occupation category code against provided occupation for life entity"
+          },
+          "smokerStatusCode" : {
+            "type" : "string",
+            "description" : "This depicts the smoker status of the provided life entity. This is an enum which represents following values * L - Never Smoked * N - Non Smoker * S - Smoker",
+            "enum" : [ "L", "N", "S" ]
+          },
+          "benefit" : {
+            "type" : "array",
+            "description" : "This provides the list of benefits against a life entity to get the pricing calculation",
+            "items" : {
+              "$ref" : "#/components/schemas/BenefitModel"
+            }
+          }
+        }
+      },
+      "IdentityExtendedModel" : {
+        "type" : "object",
+        "properties" : {
+          "identityType" : {
+            "type" : "string",
+            "description" : "Identity type to detrmine whether the identity is of individual or corporate",
+            "default" : "Individual",
+            "enum" : [ "Individual", "Corporate" ]
+          },
+          "identityId" : {
+            "type" : "integer",
+            "description" : "Unique identity Id generated by OneOffice. If this field is provided, the API will not create a new identity but links the policy with the existing identity (if found). An exception will be thrown if provided identity is not found in OneOffice.  identityId will have a high precedence over identityReference/identityAltReference and if all are provided, only identityId will be used ",
+            "format" : "int32"
+          },
+          "identityReference" : {
+            "type" : "string",
+            "description" : "External identity reference generated by consumer's system. If this field is provided, system will firstly search the identity in OneOffice having this reference number. Life policy will be linked with the identity if found, otherwise a new identity will be created based on the supplied payload"
+          },
+          "identityAltReference" : {
+            "type" : "string",
+            "description" : "External identity unique reference generated by consumer's CRM system. This reference key will just be stored in the the Oneoffice identity. There will be no searching to identify an existing identity in OneOffice based on this field"
+          },
+          "dateOfBirth" : {
+            "type" : "string",
+            "description" : "Mandatory for Life Insured Identity (relationshipCode = INSR). Date of birth associated with the identity",
+            "format" : "date"
+          },
+          "firstName" : {
+            "type" : "string",
+            "description" : "Mandatory field for creating an identity in OneOffice. First name of individual identity record"
+          },
+          "genderCode" : {
+            "type" : "string",
+            "description" : "Mandatory for Life Insured Identity (relationshipCode = INSR). Gender code of corresponding identity",
+            "enum" : [ "M", "F" ]
+          },
+          "height" : {
+            "type" : "number",
+            "description" : "This represents height of the life entity in centimeters. Its required for Income Protection benefit types",
+            "format" : "double"
+          },
+          "initials" : {
+            "type" : "string",
+            "description" : "Initials of individual identity record "
+          },
+          "identitySequence" : {
+            "type" : "integer",
+            "description" : "This depicts the life's unique sequence number being passed by the caller for request/response correlation. This can be ommitted in case of a single life",
+            "format" : "int32"
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "Mandatory field for creating an identity in OneOffice. Last name of individual identity record    "
+          },
+          "occupationCode" : {
+            "type" : "string",
+            "description" : "This expects the occupation code of the life entity being supplied"
+          },
+          "occupationCategoryCode" : {
+            "type" : "string",
+            "description" : "This expects the occupation category code against provided occupation for life entity"
+          },
+          "smokerStatusCode" : {
+            "type" : "string",
+            "description" : "Mandatory for Life Insured Identity (relationshipCode = INSR). This depicts the smoker status of the provided life entity. This is an enum which represents following values * L - Never Smoked * N - Non Smoker * S - Smoker",
+            "enum" : [ "L", "N", "S" ]
+          },
+          "tfn" : {
+            "type" : "string",
+            "description" : "Tax File Number of the identity record being referred"
+          },
+          "titleCode" : {
+            "type" : "string",
+            "description" : "Mandatory field for creating an identity in OneOffice. Title Code of life entity being provided. Valid title codes can be obtained from ReferenceData API"
+          },
+          "weight" : {
+            "type" : "number",
+            "description" : "This represents weight of the life entity in kilograms. Its required for Income Protection benefit types",
+            "format" : "double"
+          },
+          "contact" : {
+            "$ref" : "#/components/schemas/ContactModel"
+          },
+          "residentialAddress" : {
+            "$ref" : "#/components/schemas/AddressModel"
+          },
+          "postalAddress" : {
+            "$ref" : "#/components/schemas/AddressModel"
+          },
+          "relationship" : {
+            "type" : "array",
+            "description" : "This represents list of relationship codes specified in a policy",
+            "items" : {
+              "$ref" : "#/components/schemas/IdentityExtendedModel_relationship"
+            }
+          },
+          "benefit" : {
+            "type" : "array",
+            "description" : "Mandatory for Life Insured Identity (relationshipCode = INSR). It provides the list of benefits against a life entity to get the pricing calculation. ",
+            "items" : {
+              "$ref" : "#/components/schemas/BenefitModel"
+            }
+          }
+        }
+      },
+      "IdentityFetchModel" : {
+        "type" : "object",
+        "properties" : {
+          "identityType" : {
+            "type" : "string",
+            "description" : "Type to detrmine whether the identity is of individual or corporate",
+            "default" : "Individual",
+            "enum" : [ "Individual", "Corporate" ]
+          },
+          "identityId" : {
+            "type" : "integer",
+            "description" : "Unique identity Id available in OneOffice",
+            "format" : "int32"
+          },
+          "identityReference" : {
+            "type" : "string",
+            "description" : "External identity reference provided by consumer's system"
+          },
+          "dateOfBirth" : {
+            "type" : "string",
+            "description" : "Mandatory for Life Insured Identity (relationshipCode = INSR). Date of birth associated with the identity",
+            "format" : "date"
+          },
+          "firstName" : {
+            "type" : "string",
+            "description" : "Mandatory field for creating an identity in OneOffice. First name of individual identity record"
+          },
+          "gender" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "Mandatory field for creating an identity in OneOffice. Last name of individual identity record    "
+          },
+          "smokerStatus" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "title" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "relationship" : {
+            "type" : "array",
+            "description" : "This represents list of relationship codes specified in a policy",
+            "items" : {
+              "$ref" : "#/components/schemas/IdentityFetchModel_relationship"
+            }
+          },
+          "benefit" : {
+            "type" : "array",
+            "description" : "Mandatory for Life Insured Identity (relationshipCode = INSR). It provides the list of benefits against a life entity to get the pricing calculation. ",
+            "items" : {
+              "$ref" : "#/components/schemas/BenefitFetchModel"
+            }
+          }
+        }
+      },
+      "BenefitModel" : {
+        "required" : [ "benefitCode", "insuranceAmount", "premiumTypeCode" ],
+        "type" : "object",
+        "properties" : {
+          "benefitCode" : {
+            "type" : "string",
+            "description" : "This represents the benefit code against which the quotation pricing is required to be calculated"
+          },
+          "benefitSequence" : {
+            "type" : "integer",
+            "description" : "This depicts the benefit's unique sequence number for a specific life being passed by the caller for request/response correlation. This can be ommitted in case of a single benefit in a specific life entity",
+            "format" : "int32"
+          },
+          "benefitPeriodCode" : {
+            "type" : "string",
+            "description" : "This is only applicable to Income Protection benefits, it represents the period any benefit is expected to be paid"
+          },
+          "insuranceAmount" : {
+            "type" : "number",
+            "description" : "To specify total insurance amount which will be used to calculate the premium results",
+            "format" : "double"
+          },
+          "loadDuration" : {
+            "type" : "integer",
+            "description" : "This specifies the duration of loadings",
+            "format" : "int32"
+          },
+          "medicalAssessLoading" : {
+            "type" : "number",
+            "description" : "To represent medical loading to be applied to the calculated premiums",
+            "format" : "double"
+          },
+          "medicalPerMilleLoading" : {
+            "type" : "number",
+            "description" : "To represent per mille medical loading to be applied to the calculated premiums",
+            "format" : "double"
+          },
+          "occupationalAssessLoading" : {
+            "type" : "number",
+            "description" : "To represent occupational access loading to be applied to the calculated premiums",
+            "format" : "double"
+          },
+          "occupationalPerMilleLoading" : {
+            "type" : "number",
+            "description" : "To specify per mille occupational loading to be applied to the calculated premiums",
+            "format" : "double"
+          },
+          "premiumTypeCode" : {
+            "type" : "string",
+            "description" : "This field identify whether the premiums are levelled, stepped or hybrid. Following values are expected * L - Level * S - Stepped. Complete list of premium type codes can be obtained from ReferenceData API "
+          },
+          "premiumDialDownPercent" : {
+            "type" : "number",
+            "description" : "To specify any dial-down percentage applicable to the calculated premiums",
+            "format" : "double"
+          },
+          "recreationalAssessLoading" : {
+            "type" : "number",
+            "description" : "To represent any recreational loading to be applied to the calculated premiums",
+            "format" : "double"
+          },
+          "recreationalPerMilleLoading" : {
+            "type" : "number",
+            "description" : "To represent per mille recreational loading to be applied to the calculated premiums",
+            "format" : "double"
+          },
+          "waitingPeriodCode" : {
+            "type" : "string",
+            "description" : "This is only applicable to Income Protection benefits, it represents the waiting period before payments can be initiated"
+          }
+        }
+      },
+      "BenefitFetchModel" : {
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "effectiveDate" : {
+            "type" : "string",
+            "description" : "This describes the effective date of the policy benefit",
+            "format" : "date"
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "This describes the end date of the policy benefit",
+            "format" : "date"
+          },
+          "insuranceAmount" : {
+            "type" : "number",
+            "description" : "To specify total sum assured amount against specific benefit in the policy",
+            "format" : "double"
+          },
+          "modalPremiumAmount" : {
+            "type" : "number",
+            "description" : "This represents the modal premium amount against the benefit",
+            "format" : "double"
+          },
+          "paidToDate" : {
+            "type" : "string",
+            "description" : "This describes the date till when the benefit is being paid",
+            "format" : "date"
+          },
+          "premiumType" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "status" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "statusDate" : {
+            "type" : "string",
+            "description" : "This represents the date at which benefit status is changed         ",
+            "format" : "date-time"
+          }
+        }
+      },
+      "SegmentModel" : {
+        "type" : "object",
+        "properties" : {
+          "segmentType" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          },
+          "segmentBalance" : {
+            "type" : "number",
+            "description" : "Total balance available in each segment of the policy ",
+            "format" : "double"
+          }
+        }
+      },
+      "AccountModel" : {
+        "type" : "object",
+        "properties" : {
+          "paymentType" : {
+            "type" : "string",
+            "description" : "This represents the payment type * B - Bank  * C - Credit Card",
+            "enum" : [ "B", "C" ]
+          },
+          "bankBSB" : {
+            "type" : "string",
+            "description" : "Mandatory in case payment type being bank account (paymentType = B). Specify 6 digit BSB code. Bank name will be identified based on the provided BSB"
+          },
+          "accountName" : {
+            "type" : "string",
+            "description" : "Mandatory in case payment type being bank account (paymentType = B). To specify the account name"
+          },
+          "accountNumber" : {
+            "type" : "string",
+            "description" : "Mandatory in case payment type being bank account (paymentType = B). To specify the acount number"
+          },
+          "cardType" : {
+            "type" : "string",
+            "description" : "Mandatory in case payment type being credit card (paymentType = C). This specifies the card type e.g Master, Visa"
+          },
+          "cardName" : {
+            "type" : "string",
+            "description" : "Mandatory in case payment type being credit card (paymentType = C). To represent the card holder name on the card"
+          },
+          "cardNumber" : {
+            "type" : "string",
+            "description" : "Mandatory in case payment type being credit card (paymentType = C). This specifies the card number"
+          },
+          "expiryDate" : {
+            "type" : "string",
+            "description" : "Mandatory in case payment type being credit card (paymentType = C). This specifies the expiry date of the card (YYYY-MM)"
+          }
+        }
+      },
+      "ContactModel" : {
+        "type" : "object",
+        "properties" : {
+          "homePhone" : {
+            "type" : "string",
+            "description" : "Home phone number of the specific identity record"
+          },
+          "mobilePhone" : {
+            "type" : "string",
+            "description" : "Mobile number of the specific identity record"
+          },
+          "businessPhone" : {
+            "type" : "string",
+            "description" : "Business/office phone number of the specific identity record"
+          },
+          "fax" : {
+            "type" : "string",
+            "description" : "Fax number of the specific identity record"
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "Email address of the specific identity record",
+            "format" : "email"
+          },
+          "contactMethodCode" : {
+            "type" : "string",
+            "description" : "To specify the contact method code of the provided identity record. Complete list of contact method codes can be obtained from ReferenceData API"
+          },
+          "correspondenceMethodCode" : {
+            "type" : "string",
+            "description" : "To specify the correspondence method code of the provided identity record. Complete list of correspondence method codes can be obtained from ReferenceData API "
+          }
         },
-        "productCode" : {
-          "type" : "string",
-          "description" : "To specify a product code for pricing calculation"
+        "description" : "To specify the contact details of the identity records e.g. Home phone, mobile, fax, correspondence method\n  "
+      },
+      "AddressModel" : {
+        "type" : "object",
+        "properties" : {
+          "streetAddress" : {
+            "type" : "string",
+            "description" : "Street address of the specific identity address record"
+          },
+          "suburb" : {
+            "type" : "string",
+            "description" : "suburb name of the specific identity address record"
+          },
+          "postcode" : {
+            "type" : "string",
+            "description" : "Post code of the specific identity address record"
+          },
+          "stateCode" : {
+            "type" : "string",
+            "description" : "State code of the specific identity address record"
+          },
+          "countryCode" : {
+            "type" : "string",
+            "description" : "Country code of the specific identity address record"
+          }
         },
-        "applicationSource" : {
-          "type" : "string",
-          "description" : "The source of an application, its an optional field"
-        },
-        "identity" : {
-          "type" : "array",
-          "description" : "This specifies an array of life entities along with benefit list for pricing calculation",
-          "items" : {
-            "$ref" : "#/definitions/IdentityModel"
+        "description" : "To specify the address details of the identity records including country, state, postcode, suburb, street address"
+      },
+      "CalculateResponseModel" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CalculationResult"
+            }
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/GenericErrorModel"
+          }
+        }
+      },
+      "PolicyResponseModel" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/PolicyResponseModel_data"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/GenericErrorModel"
+          }
+        }
+      },
+      "PolicyCreationResult" : {
+        "type" : "object",
+        "properties" : {
+          "identityId" : {
+            "type" : "integer",
+            "description" : "Unique identity Id generated by OneOffice. This will be used to identify the correct identity in the other API calls ",
+            "format" : "int32"
+          },
+          "identityReference" : {
+            "type" : "string",
+            "description" : "External identity unique reference provided by the caller for correlation purposes "
+          },
+          "identityAltReference" : {
+            "type" : "string",
+            "description" : "External identity alternate reference provided by caller for correlation purposes"
+          }
+        }
+      },
+      "CalculationResult" : {
+        "type" : "object",
+        "properties" : {
+          "identitySequence" : {
+            "type" : "integer",
+            "description" : "This depicts the life's unique sequence number being passed by the caller for request/response correlation",
+            "format" : "int32"
+          },
+          "benefitSequence" : {
+            "type" : "integer",
+            "description" : "This represents the benefit's unique sequence number  being passed by the caller for request/response correlation",
+            "format" : "int32"
+          },
+          "calculationResults" : {
+            "type" : "array",
+            "description" : "An array of multiple premium frequencies along with the premium calculation results",
+            "items" : {
+              "$ref" : "#/components/schemas/CalculationResults"
+            }
+          }
+        }
+      },
+      "CalculationResults" : {
+        "type" : "object",
+        "properties" : {
+          "frequencyType" : {
+            "type" : "string",
+            "description" : "This represents the premium frequency against the generated results. Only the frequencies associated with requested Product and Benefit will be returned by calculation engine",
+            "enum" : [ "Weekly", "Fortnightly", "FourWeekly", "Monthly", "Quarterly", "HalfYearly", "Yearly" ]
+          },
+          "premium" : {
+            "type" : "number",
+            "description" : "The calculated insurance premium against the given premium frequency",
+            "format" : "double"
+          },
+          "stampduty" : {
+            "type" : "number",
+            "description" : "The calculated stamp duty amount against the premium frequency",
+            "format" : "double"
+          },
+          "policyFee" : {
+            "type" : "number",
+            "description" : "The calculated policy administration fee for the premium frequency",
+            "format" : "double"
+          },
+          "totalPremium" : {
+            "type" : "number",
+            "description" : "This represents the total net premium amount to be paid",
+            "format" : "double"
+          }
+        }
+      },
+      "GenericErrorModel" : {
+        "type" : "object",
+        "properties" : {
+          "status" : {
+            "type" : "string",
+            "description" : "An Enum representing Success or Failure in the current API call being made",
+            "enum" : [ "Failure", "Success" ]
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "This depicts an array of error codes and associated descriptions. This will null for Success status",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorModel"
+            }
+          }
+        }
+      },
+      "ErrorModel" : {
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "A unique code associated with each custom error throw by APIs"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "This represents the detailed error description for diagnosis"
+          }
+        }
+      },
+      "AuthenticationModel" : {
+        "required" : [ "client_id", "client_secret", "grant_type" ],
+        "type" : "object",
+        "properties" : {
+          "client_id" : {
+            "type" : "string",
+            "description" : "This specifies the unique client id generated for the consumer"
+          },
+          "client_secret" : {
+            "type" : "string",
+            "description" : "This specifies the client secret associated with a client id assigned to consumer for getting the access token",
+            "format" : "password"
+          },
+          "grant_type" : {
+            "type" : "string",
+            "description" : "This represents the possible grant types associated with the api usage to obtain the access token  ",
+            "enum" : [ "client_credentials" ]
+          }
+        }
+      },
+      "GenericTokenModel" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/TokenModel"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/GenericErrorModel"
+          }
+        }
+      },
+      "TokenModel" : {
+        "type" : "object",
+        "properties" : {
+          "access_token" : {
+            "type" : "string",
+            "description" : "An access token represent an arbitrary string being generated by API services"
+          },
+          "token_type" : {
+            "type" : "string",
+            "description" : "Token type obtained from the server"
+          },
+          "expires_in" : {
+            "type" : "integer",
+            "description" : "This specifies expiration of the access token in minutes. The token will no more be valid after expiry"
+          }
+        }
+      },
+      "PaymentRequestModel" : {
+        "required" : [ "paidAmount", "policyNumber" ],
+        "type" : "object",
+        "properties" : {
+          "policyNumber" : {
+            "type" : "string",
+            "description" : "OneOffice policy number to uniquely identify a policy"
+          },
+          "paidAmount" : {
+            "type" : "number",
+            "description" : "This refers to amount which needs to be adjusted in OneOffice for premium payment. Amount should be greater than 0 for this transaction to be successful",
+            "format" : "double"
+          },
+          "chargesRunToDate" : {
+            "type" : "string",
+            "description" : "The date till when OneOffice is required to run the charges. It is a suggestive date and the actual paid to date may vary depending on available amount",
+            "format" : "date"
+          }
+        }
+      },
+      "PaymentModel" : {
+        "type" : "object",
+        "properties" : {
+          "policyNumber" : {
+            "type" : "string",
+            "description" : "OneOffice policy number being passed in the request for coorelation purpose"
+          },
+          "balanceBefore" : {
+            "type" : "number",
+            "description" : "Original segment balance amount available to the policy before this transaction  ",
+            "format" : "double"
+          },
+          "balanceAfter" : {
+            "type" : "number",
+            "description" : "Modified segment balance amount available after performing this transaction   ",
+            "format" : "double"
+          },
+          "paidToDateBefore" : {
+            "type" : "string",
+            "description" : "The current paid to date of specific policy in the system",
+            "format" : "date"
+          },
+          "paidToDateAfter" : {
+            "type" : "string",
+            "description" : "The final paid to date being calculated by system after running charges based on amount paid",
+            "format" : "date"
+          },
+          "nextDebitDate" : {
+            "type" : "string",
+            "description" : "Next debit date reflects the updated period debit date updated in the system as a result of this transaction ",
+            "format" : "date"
+          }
+        }
+      },
+      "GenericResponseModel" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/GenericErrorModel"
+          }
+        }
+      },
+      "IdentityExtendedModel_relationship" : {
+        "type" : "object",
+        "properties" : {
+          "relationshipCode" : {
+            "type" : "string",
+            "description" : "This represents the identity's relationship in a policy. e.g. * INSR - Life Insured * BENE - Beneficiary * CLNT - Policy Client.  Complete list of relationship codes can be obtained from ReferenceData API"
+          },
+          "isFinancialDependent" : {
+            "type" : "boolean",
+            "description" : "Flag to identify whether the current identity is financially dependent on the Insurance owner"
+          }
+        }
+      },
+      "IdentityFetchModel_relationship" : {
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "$ref" : "#/components/schemas/CodeDescriptionModel"
+          }
+        }
+      },
+      "PolicyResponseModel_data" : {
+        "type" : "object",
+        "properties" : {
+          "policyNumber" : {
+            "type" : "string",
+            "description" : "The Policy Number is generated by OneOffice as a result of successful processing. Policy will be managed and maintained in OneOffice based on Policy Number"
+          },
+          "identity" : {
+            "type" : "array",
+            "description" : "The identity array enlists the list of identities being created or used with in the created policy",
+            "items" : {
+              "$ref" : "#/components/schemas/PolicyCreationResult"
+            }
           }
         }
       }
     },
-    "IdentityModel" : {
-      "type" : "object",
-      "required" : [ "benefit", "dateOfBirth" ],
-      "properties" : {
-        "dateOfBirth" : {
-          "type" : "string",
-          "format" : "date",
-          "description" : "Date of birth associated with the life entity"
-        },
-        "genderCode" : {
-          "type" : "string",
-          "description" : "Gender code of life entity",
-          "enum" : [ "M", "F" ]
-        },
-        "identitySequence" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "This depicts the life's unique sequence number being passed by the caller for request/response correlation. This can be ommitted in case of a single life"
-        },
-        "occupationCode" : {
-          "type" : "string",
-          "description" : "This expects the occupation code of the life entity being supplied"
-        },
-        "occupationCategoryCode" : {
-          "type" : "string",
-          "description" : "This expects the occupation category code against provided occupation for life entity"
-        },
-        "residentStateCode" : {
-          "type" : "string",
-          "description" : "State Code of life entity being provided. This defaults to 'NSW' in case not supplied"
-        },
-        "residentCountryCode" : {
-          "type" : "string",
-          "description" : "Country Code of life entity being provided. This defaults to 'AUS' in case not supplied"
-        },
-        "smokerStatusCode" : {
-          "type" : "string",
-          "description" : "This depicts the smoker status of the provided life entity. This is an enum which represents following values * L - Never Smoked * N - Non Smoker * S - Smoker",
-          "enum" : [ "L", "N", "S" ]
-        },
-        "benefit" : {
-          "type" : "array",
-          "description" : "This provides the list of benefits against a life entity to get the pricing calculation",
-          "items" : {
-            "$ref" : "#/definitions/BenefitModel"
+    "responses" : {
+      "400BadRequest" : {
+        "description" : "Bad Request",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/GenericResponseModel"
+            },
+            "examples" : {
+              "response" : {
+                "value" : {
+                  "data" : { },
+                  "metadata" : {
+                    "status" : "Failure",
+                    "errors" : [ ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "401NotAuthorized" : {
+        "description" : "Not authorized",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/GenericResponseModel"
+            },
+            "examples" : {
+              "response" : {
+                "value" : {
+                  "data" : { },
+                  "metadata" : {
+                    "status" : "Failure",
+                    "errors" : [ ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "500InternalError" : {
+        "description" : "Internal Server Error",
+        "content" : {
+          "application/json" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/GenericResponseModel"
+            },
+            "examples" : {
+              "response" : {
+                "value" : {
+                  "data" : { },
+                  "metadata" : {
+                    "status" : "Failure",
+                    "errors" : [ ]
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
-    "BenefitModel" : {
-      "type" : "object",
-      "required" : [ "benefitCode", "insuranceAmount" ],
-      "properties" : {
-        "benefitCode" : {
-          "type" : "string",
-          "description" : "This represents the benefit code against which the quotation pricing is required to be calculated"
-        },
-        "benefitSequence" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "This depicts the benefit's unique sequence number for a specific life being passed by the caller for request/response correlation. This can be ommitted in case of a single benefit in a specific life entity"
-        },
-        "benefitPeriodCode" : {
-          "type" : "string",
-          "description" : "This is only applicable to Income Protection benefits, it represents the period any benefit is expected to be paid"
-        },
-        "cpi" : {
-          "type" : "boolean",
-          "description" : "This is a boolean flag to depict the consumer price index. This will be considered as True if not supplied"
-        },
-        "fundingType" : {
-          "type" : "string",
-          "description" : "This represents the funding type"
-        },
-        "height" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "This represent height of the life entity in centimeters. Its required for Income Protection benefit types"
-        },
-        "insuranceAmount" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To specify total insurance amount which will be used to calculate the premium results"
-        },
-        "loadDuration" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "This specifies the duration of loadings"
-        },
-        "medicalAssessLoading" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To represent medical loading to be applied to the calculated premiums"
-        },
-        "medicalPerMilleLoading" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To represent per mille medical loading to be applied to the calculated premiums"
-        },
-        "occupationalAssessLoading" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To represent occupational access loading to be applied to the calculated premiums"
-        },
-        "occupationalPerMilleLoading" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To specify per mille occupational loading to be applied to the calculated premiums"
-        },
-        "premiumTypeCode" : {
-          "type" : "string",
-          "description" : "This field represents the premium type i.e. L=Level, S=Stepped, H=Hybrid"
-        },
-        "premiumWaiverOption" : {
-          "type" : "string",
-          "description" : "This represents any waiver option to be specified on premiums"
-        },
-        "premiumDialDownPercent" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To specify any dialdown percentage applicable to the calculated premiums"
-        },
-        "recreationalAssessLoading" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To represent any recreational loading to be applied to the calculated premiums"
-        },
-        "recreationalPerMilleLoading" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To represent per mille recreational loading to be applied to the calculated premiums"
-        },
-        "superContributionAmount" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "To specify super contribution amount which will be summed in the insured amount to calculate the results"
-        },
-        "waitingPeriodCode" : {
-          "type" : "string",
-          "description" : "This is only applicable to Income Protection benefits, it represents the waiting period before payments can be initiated"
-        },
-        "weight" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "This represent weight of the life entity in kilograms. Its required for Income Protection benefit types"
-        }
-      }
-    },
-    "GenericResponseModel" : {
-      "type" : "object",
-      "properties" : {
-        "data" : {
-          "type" : "array",
-          "items" : {
-            "$ref" : "#/definitions/ResultsModel"
+    "securitySchemes" : {
+      "OAuth2" : {
+        "type" : "oauth2",
+        "description" : "This API uses OAuth2 with the client credentials grant flow. [More info](https://api.example.com/docs/auth)",
+        "flows" : {
+          "clientCredentials" : {
+            "tokenUrl" : "/Auth/Token",
+            "scopes" : {
+              "read" : "Grants read access",
+              "write" : "Grants write access"
+            }
           }
-        },
-        "metadata" : {
-          "$ref" : "#/definitions/GenericErrorModel"
-        }
-      }
-    },
-    "ResultsModel" : {
-      "type" : "object",
-      "properties" : {
-        "identitySequence" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "This depicts the life's unique sequence number being passed by the caller for request/response correlation"
-        },
-        "benefitSequence" : {
-          "type" : "integer",
-          "format" : "int32",
-          "description" : "This represents the benefit's unique sequence number  being passed by the caller for request/response correlation"
-        },
-        "frequencies" : {
-          "type" : "array",
-          "description" : "An array of multiple premium frequencies along with the premium calculation results",
-          "items" : {
-            "$ref" : "#/definitions/CalculationResults"
-          }
-        }
-      }
-    },
-    "CalculationResults" : {
-      "type" : "object",
-      "properties" : {
-        "type" : {
-          "type" : "string",
-          "description" : "This represents the premium frequency against the generated results. Only the frequencies associated with requested Product and Benefit will be returned by calculation engine",
-          "enum" : [ "Weekly", "Fortnightly", "FourWeekly", "Monthly", "Quarterly", "HalfYearly", "Yearly" ]
-        },
-        "premium" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "The calculated insurance premium against the given premium frequency"
-        },
-        "stampduty" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "The calculated stamp duty amount against the premium frequency"
-        },
-        "policyFee" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "The calculated policy administration fee for the premium frequency"
-        },
-        "totalPremium" : {
-          "type" : "number",
-          "format" : "double",
-          "description" : "This represents the total net premium amount to be paid"
-        }
-      }
-    },
-    "GenericErrorModel" : {
-      "type" : "object",
-      "properties" : {
-        "status" : {
-          "type" : "string",
-          "description" : "An Enum representing Success or Failure in the current API call being made",
-          "enum" : [ "Failure", "Success" ]
-        },
-        "errors" : {
-          "type" : "array",
-          "description" : "This depicts an array of error codes and associated descriptions. This will null for Success status",
-          "items" : {
-            "$ref" : "#/definitions/ErrorModel"
-          }
-        }
-      }
-    },
-    "ErrorModel" : {
-      "type" : "object",
-      "properties" : {
-        "code" : {
-          "type" : "string",
-          "description" : "A unique code associated with each custom error throw by APIs"
-        },
-        "description" : {
-          "type" : "string",
-          "description" : "This represents the detailed error description for diagnosis"
-        }
-      }
-    },
-    "AuthenticationModel" : {
-      "type" : "object",
-      "required" : [ "password", "userName" ],
-      "properties" : {
-        "userName" : {
-          "type" : "string",
-          "description" : "This specifies the unique user name for getting the access token"
-        },
-        "password" : {
-          "type" : "string",
-          "description" : "This specifies the password associated with user  for getting the access token"
-        },
-        "domain" : {
-          "type" : "string",
-          "description" : "To specify the user's domain"
-        }
-      }
-    },
-    "GenericTokenModel" : {
-      "type" : "object",
-      "properties" : {
-        "data" : {
-          "$ref" : "#/definitions/TokenModel"
-        },
-        "metadata" : {
-          "$ref" : "#/definitions/GenericErrorModel"
-        }
-      }
-    },
-    "TokenModel" : {
-      "type" : "object",
-      "properties" : {
-        "accessToken" : {
-          "type" : "string",
-          "description" : "An access token represnt an arbitrary string being generated by API services."
         }
       }
     }
