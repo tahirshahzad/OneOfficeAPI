@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "1.0.0-oas3"
+  version: "1.0.1"
   title: OneOffice.API
   x-logo:
     url: 'http://localhost:31906/Static/Images/OneOffice.png'
@@ -980,12 +980,8 @@ components:
           type: string  
         product:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This reflects the product associated with the policy 
         premiumFrequency:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This represents the selected premium payment frequency against a policy 
         premiumPauseStartDate:
           description: >-
             This describes the date at which premium is being paused against the policy
@@ -998,8 +994,6 @@ components:
           type: string  
         registerState:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This represents the selected state for stamp duty calculation 
         renewalDate:
           format: date
           type: string  
@@ -1007,8 +1001,6 @@ components:
             This represents the date at which policy is being renewed     
         status:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This represents the current status of the policy 
         statusDate:
           format: date-time
           type: string  
@@ -1247,20 +1239,14 @@ components:
             Mandatory field for creating an identity in OneOffice. First name of individual identity record
         gender:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This represents the gender detail of the corresponding identity
         lastName:
           type: string
           description: >-
             Mandatory field for creating an identity in OneOffice. Last name of individual identity record    
         smokerStatus:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-             This depicts the smoker status of the associated life entity.
         title:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This represents the title of the corresponding identity
         relationship:
           type: array
           description: >-
@@ -1374,8 +1360,6 @@ components:
       properties:
         type:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This represents the opted benefit type against the identity
         effectiveDate:
           description: >-
             This describes the effective date of the policy benefit
@@ -1403,12 +1387,8 @@ components:
           type: string
         premiumType:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This field identify whether the premiums are levelled or stepped 
         status:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This represents the current status of the benefit within the policy 
         statusDate:
           format: date-time
           type: string  
@@ -1420,8 +1400,6 @@ components:
       properties:
         segmentType:
           $ref: '#/components/schemas/CodeDescriptionModel'
-          description: >-
-            This represents the segment type i.e. Assetless Segment, SuperContribution  
         segmentBalance:
           format: double
           type: number
