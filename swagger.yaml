@@ -1,11 +1,11 @@
 openapi: 3.0.0
 info:
-  version: "1.0.1"
+  version: "1.0.0-oas3"
   title: OneOffice.API
   x-logo:
     url: 'http://localhost:31906/Static/Images/OneOffice.png'
   license:
-    name: Ebix Australia Pty
+    name: 'Ebix Australia Pty'
     url: 'https://www.ebix.com.au'
   contact:
     url: 'https://www.ebix.com.au/contact/contact-form'
@@ -264,8 +264,8 @@ paths:
                       policyNumber: TDX10000159
                       identity:
                       - identityId: 2231
-                        identityReference: SF-01290
-                        identityAltReference: NH-11231
+                        identityReference: NH-11231
+                        identityAltReference: SF-01290
                     metadata:
                       status: Success
                       errors: null
@@ -276,11 +276,11 @@ paths:
                       policyNumber: IA110000159
                       identity:
                       - identityId: 4411
-                        identityReference: SF-01290
-                        identityAltReference: NH-11231
+                        identityReference: NH-11231
+                        identityAltReference: SF-01290
                       - identityId: 2236
-                        identityReference: SF-01299
-                        identityAltReference: NH-11233  
+                        identityReference: NH-11233
+                        identityAltReference: SF-01299  
                     metadata:
                       status: Success
                       errors:
@@ -327,8 +327,8 @@ paths:
                   userName: paulw
                   identity:
                     - identityType: Individual
-                      identityReference: SF-01290
-                      identityAltReference: NH-11231
+                      identityReference: NH-11231
+                      identityAltReference: SF-01290
                       dateOfBirth: '1980-06-17'
                       firstName: Johnny
                       genderCode: M
@@ -369,7 +369,7 @@ paths:
                           recreationalPerMilleLoading: 0
                   account:
                     - paymentType: B
-                      bankBSB: '623560'
+                      bankBSB: 623-560
                       accountName: Johnny Mihalis
                       accountNumber: 123456789
                   
@@ -432,8 +432,8 @@ paths:
 
                   - identityType: Individual
                     identityId: null
-                    identityReference: SF-01291
-                    identityAltReference: NH-11232
+                    identityReference: NH-11232
+                    identityAltReference: SF-01291
                     dateOfBirth: '1986-06-13'
                     firstName: Jessica
                     genderCode: F
@@ -460,8 +460,8 @@ paths:
                     
                   - identityType: Individual
                     identityId: null
-                    identityReference: SF-01299
-                    identityAltReference: NH-11288
+                    identityReference: NH-11288
+                    identityAltReference: SF-01299
                     dateOfBirth: '2000-06-13'
                     firstName: William
                     genderCode: M
@@ -488,8 +488,8 @@ paths:
                     
                   - identityType: Individual
                     identityId: null
-                    identityReference: SF-01298
-                    identityAltReference: NH-11277
+                    identityReference: NH-11277
+                    identityAltReference: SF-01298
                     dateOfBirth: '2014-06-08'
                     firstName: Audrey
                     genderCode: F
@@ -550,7 +550,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PolicySummaryModel'
+                $ref: '#/components/schemas/PolicySummaryResponseModel'
               examples:
                 Example 1:
                   value:
@@ -642,10 +642,235 @@ paths:
         '500':
            $ref: '#/components/responses/500InternalError'    
            
+  /policies/{id}/benefits:
+    get:
+      tags:
+        - Policy
+      summary: To Fetch Life Policy Benefits
+      description: >
+        The endpoint is used to fetch list of benefits against a policy number. It accepts PolicyNo as path parameter and an optional boolean parameter 'includeHistory' which implies whether the current benefits are needed or all benefit records (including history records) should be included in payload. Current benefits included all the current of future benefits having status of either Inforce or Proposal. The response is policy benefit object being returned
+    
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: >-
+            OneOffice policy number to fetch the summary information 
+        - in: query
+          name: includeHistory
+          description: >-
+            To specify whether historical benefit records are required to be included in payload. By default only 'Current' benefits are returned  
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyBenefitResponseModel'
+              examples:
+                Example 1:
+                  value:
+                  - identityId: 2231
+                    identityReference: NH-11277
+                    effectiveDate: '2019-01-01'
+                    endDate: '2019-12-31'
+                    benefitSequence: 1
+                    campaign:
+                      code: ''
+                      description: ''
+                    cancellationReason:
+                      code: ''
+                      description: ''
+                    claimDate: ''
+                    creationReason:
+                      code: 1
+                      description: New Business
+                    expiryDate: '2019-12-31'
+                    isClaimRequested: false
+                    isCPI: true
+                    isPremiumFreeze: false
+                    isPremiumPaused: false
+                    isPremiumWaived: true
+                    originalCreationDate: '2018-01-01'
+                    originalEndDate: '2018-12-31'
+                    originalIssueDate: '2018-01-01'
+                    originalStartDate: '2018-01-01'
+                    paidUptoDate: '2019-06-30'
+                    policyFeeStampDutyAmount: 0
+                    premiumPauseExpiryDate: ''
+                    premiumPauseStartDate: ''
+                    processCreatedBy:
+                      code: ''
+                      description: ''
+                    status:
+                      code: 1
+                      description: Inforce
+                    statusDate: '2019-01-01'
+                    registerState: NSW
+                    discounts:
+                      decreasingDiscountPercent: 0
+                      expenseDiscountPercent: 0
+                      negotiationPerMilleDiscountAmount: 0
+                      noClaimDiscountPercent: 2
+                      noClaimDiscountStartDate: '2019-01-01'
+                      policyFeeNegotiationDiscountPercent: 0
+                      riskDiscountPercent: 0
+                    loadings:
+                      medicalLoadingPercent: 5
+                      medicalPerMilleLoadingAmount: 0
+                      medicalPerMilleLoadingDuration: 5
+                      occupationalLoadingPercent: 0
+                      occupationalPerMilleLoadingAmount: 0
+                      occupationalPerMilleLoadingDuration: 0
+                      recreationalLoadingPercent: 0
+                      recreationalPerMilleLoadingAmount: 0
+                      recreationalPerMilleLoadingDuration: 0
+                    premiumComponents:
+                      annualPremiumAmount: 240
+                      annualStampDutyAmount: 0
+                      modalPremiumAmount: 20
+                    ratingFactors:
+                      benefitIndexation: ''
+                      benefitPeriod:
+                        code: ''
+                        description: ''
+                      dateOfBirth: '1983-07-29'
+                      employmentStatus:
+                        code: C
+                        description: Employed under terms of contract
+                      gender:
+                        code: M
+                        description: Male
+                      occupation:
+                        code: ''
+                        description: ''
+                      occupationCategory:
+                        code: ''
+                        description: ''
+                      premiumType:
+                        code: S
+                        description: Stepped
+                      seriesCode: ''
+                      smoker:
+                        code: N
+                        description: Non Smoker
+                      sumInsuredAmount: 250000
+                      type:
+                        code: DT1
+                        description: Death Benefit
+                      waitingPeriod:
+                        code: ''
+                        description: ''
+                    reinsurance:
+                      assessmentReferenceNo: ''
+                      plan:
+                        code: ''
+                        description: ''
+                      proportionPercentage: 0
+                      retainedSumInsuredAmount: 0
+
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponseModel'
+              examples:
+                Example 1:
+                  value:
+                    data: {}
+                    metadata:
+                      status: Failure
+                      errors:
+                        - code: 'P100'
+                          description: PolicyNo 'TDX01223455' not found in OneOffice
+        
+        '400':
+           $ref: '#/components/responses/400BadRequest'
+        '401':
+           $ref: '#/components/responses/401NotAuthorized'   
+        '500':
+           $ref: '#/components/responses/500InternalError'             
+           
+  /policies/{id}/claims:
+    get:
+      tags:
+        - Claim
+      summary: To Fetch Policy Claims Summary
+      description: >
+        The endpoint is used to fetch list of claims against a policy number. It accepts PolicyNo as path parameter and returns a list of claims against that policy 
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: >-
+            OneOffice policy number to fetch the claims information 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyClaimsResponseModel'
+              examples:
+                Example 1:
+                  value:
+                  - claimDate: '2019-01-01'
+                    claimAmount: 50000.00
+                    claimNo: 5521
+                    identityId: 2231
+                    incident: 
+                      code: DTH
+                      description: Death
+                    paidAmount: 50000.00
+                    status:
+                      code: 0
+                      description: Open
+                  - claimDate: '2018-01-01'
+                    claimAmount: 1250.00
+                    claimNo: 1087
+                    identityId: 2231
+                    incident: 
+                      code: TPD
+                      description: Permanent Disability
+                    paidAmount: 1250.00
+                    status:
+                      code: 7
+                      description: Closed
+                      
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponseModel'
+              examples:
+                Example 1:
+                  value:
+                    data: {}
+                    metadata:
+                      status: Failure
+                      errors:
+                        - code: 'P100'
+                          description: PolicyNo 'TDX01223455' not found in OneOffice
+        
+        '400':
+           $ref: '#/components/responses/400BadRequest'
+        '401':
+           $ref: '#/components/responses/401NotAuthorized'   
+        '500':
+           $ref: '#/components/responses/500InternalError'                      
+           
   /policies/payments:
     post:
       tags:
-        - Policy
+        - Payment
       summary: To Initiate a Payment Request
       description: >
         This endpoint is used to initialize a payment requrest against a policy available in OneOffice. System will firstly verifiy the policy number and status before processing this request. Policies with 'Enforce' and 'Pending-Lapsed' status will accept these adhoc payments. Upon successful validation, system will add balance amount in policy segment balance and will execute charges function to generate insurance transactions. This would yeild an updated paid to date along with a revised next debit date (if applicable).        
@@ -658,7 +883,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericResponseModel'
+                $ref: '#/components/schemas/PaymentResponseModel'
               examples:
                 Example 1:
                   value:
@@ -738,10 +963,10 @@ paths:
   /policies/{id}/payments/history:
     get:
       tags:
-        - Policy
+        - Payment
       summary: To get a list of Payment history
       description: >- 
-        blah
+        This endpoint lists all the incoming/out going payments associated with the policy. System will firstly verifiy the policy number before processing this request. Upon successful validation, system will list historical payments data. API accepts PolicyNo in path parameter
       parameters:
         - in: path
           name: id
@@ -750,35 +975,108 @@ paths:
           required: true
           description: >-
             OneOffice policy number to fetch the history payment information  
+        - in: query
+          name: paymentType
+          description: >-
+            To specify the payment types to be retrieved. This will result in all payment types, if unspecified 
+          schema:
+            enum:
+              - Debit
+              - Credit
+        - in: query
+          name: effectiveFrom
+          description: >-
+            To return the payment history from a specific date till the current date. System will try to return all payment records if effectiveFrom is unspecified 
+          schema:
+            type: string
+            format: date
+
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GenericResponseModel'
+                $ref: '#/components/schemas/PaymentHistoryResponseModel'
               examples:
                 Example 1:
                   value:
                     data:
-                      policyNumber: TDX10000159
-                      balanceBefore: 3.00
-                      balanceAfter: 1.50
-                      paidToDateBefore: '2019-06-30'
-                      paidToDateAfter: '2019-07-31'
-                      nextDebitDate: '2019-08-31'
+                      - accountFrom:
+                          paymentType: B
+                          bankBSB: 032-001
+                          accountName: Gerry Thompson
+                          accountNumber: 1234567
+                          cardType: ''
+                          cardName: ''
+                          cardNumber: ''
+                          expiryDate: ''
+                        accountTo:
+                          paymentType: B
+                          bankBSB: 045-007
+                          accountName: Star Insurers
+                          accountNumber: 9876542
+                          cardType: ''
+                          cardName: ''
+                          cardNumber: ''
+                          expiryDate: ''
+                        claimNo: 0
+                        deductionDate: '2018-07-08'
+                        effectiveDate: '2018-07-08'
+                        paymentAmount: 25.00
+                        paymentType:
+                          code: 13
+                          description: Debit Customer
+                        referenceNo: 1778
+                        reversalDate: ''
+                        source:
+                          code: 50
+                          description: Policy
+                        status:
+                          code: A
+                          description: Authorized
+                        statusDate: '2018-07-07' 
                     metadata:
                       status: Success
                       errors:  
                 Example 2:
                   value:
                     data:
-                      policyNumber: IA110000160
-                      balanceBefore: 0.00
-                      balanceAfter: 15.00
-                      paidToDateBefore: '2019-04-30'
-                      paidToDateAfter: '2019-05-31'
-                      nextDebitDate: '2019-06-31'
+                      data:
+                      - accountFrom:
+                          paymentType: B
+                          bankBSB: 045-007
+                          accountName: Star Insurers
+                          accountNumber: 9876542
+                          cardType: ''
+                          cardName: ''
+                          cardNumber: ''
+                          expiryDate: ''
+                        accountTo:
+                          paymentType: B
+                          bankBSB: 032-001
+                          accountName: Gerry Thompson
+                          accountNumber: 1234567
+                          cardType: ''
+                          cardName: ''
+                          cardNumber: ''
+                          expiryDate: ''
+                        claimNo: 16675
+                        deductionDate: '2018-07-08'
+                        effectiveDate: '2018-07-08'
+                        paymentAmount: 14000.00
+                        paymentType:
+                          code: 50
+                          description: Credit Customer
+                        referenceNo: 8796
+                        reversalDate: ''
+                        source:
+                          code: 40
+                          description: Claim Payment
+                        status:
+                          code: A
+                          description: Authorized
+                        statusDate: '2018-07-07' 
                     metadata:
                       status: Success
                       errors:
@@ -795,14 +1093,6 @@ paths:
                     metadata:
                       status: Failure
                       errors:
-                        - code: 'P200'
-                          description: Policy number 'TDX10000122' is not having a valid status to accept payments
-                Example 2:
-                  value:
-                    data: {}
-                    metadata:
-                      status: Failure
-                      errors:
                         - code: 'P201'
                           description: Policy number 'TDX10000122' is not found in OneOffice          
 
@@ -812,6 +1102,138 @@ paths:
            $ref: '#/components/responses/401NotAuthorized'   
         '500':
            $ref: '#/components/responses/500InternalError'              
+           
+  /identities:
+    put:
+      tags:
+        - Identity
+      summary: To update an existing Identity 
+      description: >
+        This endpoint is used to update an existing identity in OneOffice. System will firstly verifiy the OneOffice generated IdentityId. An exception will be thrown if provided identityId is not found in OneOffice. The response of this API is a success/failure message with appropriate error code
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponseModel'
+              examples:
+                Example 1:
+                  value:
+                    data:
+                    metadata:
+                      status: Success
+                      errors:  
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponseModel'
+              examples:
+                Example 1:
+                  value:
+                    data: {}
+                    metadata:
+                      status: Failure
+                      errors:
+                        - code: 'P500'
+                          description: Identity Id '2230' is not found in OneOffice
+ 
+        '400':
+           $ref: '#/components/responses/400BadRequest'
+        '401':
+           $ref: '#/components/responses/401NotAuthorized'   
+        '500':
+           $ref: '#/components/responses/500InternalError'     
+      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityModel'
+            examples:
+              Example 1:
+                value:
+                  identityType: Individual
+                  identityId: 2230
+                  identityReference: NH-11231
+                  identityAltReference: SF-01290
+                  dateOfBirth: '1980-06-17'
+                  firstName: Johnny
+                  genderCode: M
+                  identitySequence: 1
+                  lastName: Mihalis
+                  occupationCode: OC006
+                  smokerStatusCode: 'N'
+                  titleCode: 2
+                  contact:
+                    homePhone: 024569817
+                    mobilePhone: 049878123
+                    email: jmihalis@yahoo.com
+                    contactMethodCode: C
+                    correspondenceMethodCode: E
+                  residentialAddress:
+                    streetAddress: 12A Homebush Bay Dr
+                    suburb: Rhodes
+                    postcode: 2111
+                    stateCode: NSW
+                    countryCode: AUS
+              Example 2:
+                value:
+                  identityType: Individual
+                  identityId: 2231
+                  identityReference: null
+                  identityAltReference: null
+                  dateOfBirth: '1980-06-13'
+                  firstName: Sara
+                  genderCode: F
+                  identitySequence: 1
+                  lastName: Parker
+                  occupationCode: OC006
+                  smokerStatusCode: L
+                  titleCode: 2
+                  contact:
+                    homePhone: 024569817
+                    mobilePhone: 049878123
+                    email: sparker@gmail.com
+                    contactMethodCode: C
+                    correspondenceMethodCode: E
+                  residentialAddress:
+                    streetAddress: 12A Homebush Bay Dr
+                    suburb: Rhodes
+                    postcode: 2111
+                    stateCode: NSW
+                    countryCode: AUS
+              Example 3:
+                value:
+                  identityType: Individual
+                  identityId: 2235
+                  identityReference: NH-11232
+                  identityAltReference: SF-01291
+                  dateOfBirth: '1986-06-13'
+                  firstName: Jessica
+                  genderCode: F
+                  identitySequence: 1
+                  lastName: Mihalis
+                  occupationCode: OC008
+                  smokerStatusCode: N
+                  titleCode: 1
+                  contact:
+                    homePhone: 024569817
+                    mobilePhone: 049878124
+                    email: jmihalis1@yahoo.com
+                    contactMethodCode: C
+                    correspondenceMethodCode: E
+                  residentialAddress:
+                    streetAddress: 12A Homebush Bay Dr
+                    suburb: Rhodes
+                    postcode: 2111
+                    stateCode: NSW
+                    countryCode: AUS
+        description: >-
+          The request payload will be provided in this object which contains policy number and amount to be paid 
+        required: true
         
 servers:
   - url: 'https://virtserver.swaggerhub.com/tahirshahzad/OneOfficeAPIs/1.0.0'
@@ -857,7 +1279,9 @@ components:
             This specifies an array of life entities along with benefit list for
             pricing calculation
           items:
-            $ref: '#/components/schemas/IdentityModel'
+            allOf:
+              - $ref: '#/components/schemas/IdentityBasicModel'
+              - $ref: '#/components/schemas/BenefitsModel'  
     
     PolicyRequestModel:
       type: object
@@ -890,7 +1314,6 @@ components:
           type: boolean
           description: >-
             This flag identifies whether straight through processing is required. 'Yes', would result in the policy being created and issued whereas 'No' would result the policy to be created in Proposal state
-            
         productCode:
           description: >-
             To specify a product code for pricing calculation
@@ -926,7 +1349,10 @@ components:
             This specifies an array of life entities along with policy relationships and benefit list for
             premium calculation
           items:
-            $ref: '#/components/schemas/IdentityExtendedModel'
+            allOf:
+              - $ref: '#/components/schemas/IdentityModel'
+              - $ref: '#/components/schemas/RelationshipsModel'
+              - $ref: '#/components/schemas/BenefitsModel' 
         account:
           type: array
           description: >-
@@ -946,9 +1372,38 @@ components:
           description: >-
             This describes the description field    
             
+    PolicySummaryResponseModel:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/PolicySummaryModel'  
+        metadata:
+          $ref: '#/components/schemas/GenericErrorModel'  
+          
+    
+    PolicyClaimsResponseModel:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClaimSelectBasicModel'   
+        metadata:
+          $ref: '#/components/schemas/GenericErrorModel'        
+    
+    
+    PolicyBenefitResponseModel:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BenefitSelectModel'   
+        metadata:
+          $ref: '#/components/schemas/GenericErrorModel'        
+    
     PolicySummaryModel:
       type: object
-      
       properties:
         effectiveDate:
           description: >-
@@ -979,9 +1434,15 @@ components:
           format: date
           type: string  
         product:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This reflects the product associated with the policy 
         premiumFrequency:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the selected premium payment frequency against a policy 
         premiumPauseStartDate:
           description: >-
             This describes the date at which premium is being paused against the policy
@@ -993,14 +1454,20 @@ components:
           format: date
           type: string  
         registerState:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the selected state for stamp duty calculation 
         renewalDate:
           format: date
           type: string  
           description: >-
             This represents the date at which policy is being renewed     
         status:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the current status of the policy 
         statusDate:
           format: date-time
           type: string  
@@ -1011,7 +1478,7 @@ components:
           description: >-
             This specifies an array of life entities along with policy relationships and benefit list
           items:
-            $ref: '#/components/schemas/IdentityFetchModel'
+            $ref: '#/components/schemas/IdentitySelectModel'
         segment:
           type: array
           description: >-
@@ -1019,22 +1486,41 @@ components:
           items:
             $ref: '#/components/schemas/SegmentModel'        
           
-    IdentityModel:
+    RelationshipsModel:
       type: object
-      required:
-        - dateOfBirth
-        - genderCode
-        - benefit
+      properties:
+        relationship:
+          type: array
+          description: >-
+            This represents list of relationship codes specified in a policy
+          items:
+            $ref: '#/components/schemas/RelationshipModel'  
+    
+    RelationshipModel:
+      type: object
+      properties:
+        relationshipCode:
+          type: string
+          description: >-
+            This represents the identity's relationship in a policy. e.g. * INSR - Life Insured * BENE - Beneficiary * CLNT - Policy Client. 
+            Complete list of relationship codes can be obtained from ReferenceData API
+        isFinancialDependent:
+          type: boolean
+          description: >-
+            Flag to identify whether the current identity is financially dependent on the Insurance owner    
+    
+    IdentityBasicModel:
+      type: object
       properties:
         dateOfBirth:
           format: date
           type: string
           description: >-
-            Date of birth associated with the life entity
+            Mandatory for Life Insured Identity (relationshipCode = INSR). Date of birth associated with the identity
         genderCode:
           type: string
           description: >-
-            Gender code of life entity
+            Mandatory for Life Insured Identity (relationshipCode = INSR). Gender code of corresponding identity
           enum:
             - M
             - F
@@ -1054,7 +1540,6 @@ components:
           description: >-
             This expects the occupation category code against provided
             occupation for life entity
-        
         smokerStatusCode:
           type: string
           description: >-
@@ -1065,150 +1550,71 @@ components:
             - L
             - 'N'
             - S
-        benefit:
-          type: array
-          description: >-
-            This provides the list of benefits against a life entity to get the
-            pricing calculation
-          items:
-            $ref: '#/components/schemas/BenefitModel'
-            
-    IdentityExtendedModel:
-      type: object
-      properties:
-        identityType:
-          type: string
-          description: >-
-            Identity type to detrmine whether the identity is of individual or corporate
-          enum:
-            - Individual
-            - Corporate
-          default: Individual
-        identityId:
-          type: integer
-          format: int32
-          description: >-
-            Unique identity Id generated by OneOffice. If this field is
-            provided, the API will not create a new identity but links the
-            policy with the existing identity (if found). An exception will be
-            thrown if provided identity is not found in OneOffice. 
-            identityId will have a high precedence over identityReference/identityAltReference and if all are provided, only identityId will be used 
-        identityReference:
-          type: string
-          description: >-
-            External identity reference generated by consumer's
-            system. If this field is provided, system will firstly search the
-            identity in OneOffice having this reference number. Life policy will
-            be linked with the identity if found, otherwise a new identity will
-            be created based on the supplied payload
-        identityAltReference:
-          type: string
-          description: >-
-            External identity unique reference generated by consumer's CRM
-            system. This reference key will just be stored in the the Oneoffice identity. There will be no searching to identify an existing identity in OneOffice based on this field
-        dateOfBirth:
-          format: date
-          type: string
-          description: >-
-            Mandatory for Life Insured Identity (relationshipCode = INSR). Date of birth associated with the identity
-        firstName:
-          type: string
-          description: >-
-            Mandatory field for creating an identity in OneOffice. First name of individual identity record
-        genderCode:
-          type: string
-          description: >-
-            Mandatory for Life Insured Identity (relationshipCode = INSR). Gender code of corresponding identity
-          enum:
-            - M
-            - F
-        height:
-          format: double
-          type: number
-          description: >-
-            This represents height of the life entity in centimeters. Its
-            required for Income Protection benefit types
-        initials:
-          type: string
-          description: >-
-            Initials of individual identity record 
-        identitySequence:
-          format: int32
-          type: integer
-          description: >-
-            This depicts the life's unique sequence number being passed by the
-            caller for request/response correlation. This can be ommitted in
-            case of a single life
-        lastName:
-          type: string
-          description: >-
-            Mandatory field for creating an identity in OneOffice. Last name of individual identity record    
-        occupationCode:
-          type: string
-          description: >-
-            This expects the occupation code of the life entity being supplied
-        occupationCategoryCode:
-          type: string
-          description: >-
-            This expects the occupation category code against provided
-            occupation for life entity
-        smokerStatusCode:
-          type: string
-          description: >-
-            Mandatory for Life Insured Identity (relationshipCode = INSR). This depicts the smoker status of the provided life entity. This is
-            an enum which represents following values * L - Never Smoked * N -
-            Non Smoker * S - Smoker
-          enum:
-            - L
-            - N
-            - S
-        tfn:
-          type: string
-          description: >-
-            Tax File Number of the identity record being referred
-        titleCode:
-          type: string
-          description: >-
-            Mandatory field for creating an identity in OneOffice. Title Code of life entity being provided. Valid title codes can be
-            obtained from ReferenceData API
-        weight:
-          format: double
-          type: number
-          description: >-
-            This represents weight of the life entity in kilograms. Its required
-            for Income Protection benefit types
-        contact:
-          $ref: '#/components/schemas/ContactModel'
-        residentialAddress:
-          $ref: '#/components/schemas/AddressModel'
-        postalAddress:
-          $ref: '#/components/schemas/AddressModel'
-        relationship:
-          type: array
-          description: >-
-            This represents list of relationship codes specified in a policy
-          items:
-            type: object
-            properties:
-              relationshipCode:
-                type: string
-                description: >-
-                  This represents the identity's relationship in a policy. e.g. * INSR - Life Insured * BENE - Beneficiary * CLNT - Policy Client. 
-                  Complete list of relationship codes can be obtained from ReferenceData API
-                  
-              isFinancialDependent:
-                type: boolean
-                description: >-
-                  Flag to identify whether the current identity is financially dependent on the Insurance owner
-        benefit:
-          type: array
-          description: >-
-            Mandatory for Life Insured Identity (relationshipCode = INSR). It provides the list of benefits against a life entity to get the
-            pricing calculation. 
-          items:
-            $ref: '#/components/schemas/BenefitModel'
-            
-    IdentityFetchModel:
+    
+    IdentityModel:
+      allOf:
+        - $ref: '#/components/schemas/IdentityBasicModel'
+        - type: object
+          properties:
+            identityType:
+              type: string
+              description: >-
+                Identity type to detrmine whether the identity is of individual or corporate
+              enum:
+                - Individual
+                - Corporate
+              default: Individual
+            identityId:
+              type: integer
+              format: int32
+              description: >-
+                Unique identity Id generated by OneOffice. If this field is provided, the API will not create a new identity but links the policy with the existing identity (if found). An exception will be thrown if provided identity is not found in OneOffice. identityId will have a high precedence over  identityReference/identityAltReference and if all are provided, only identityId will be used 
+            identityReference:
+              type: string
+              description: >-
+                External identity reference generated by consumer's system. If this field is provided, system will firstly search the identity in OneOffice having this reference number. Life policy will be linked with the identity if found, otherwise a new identity will be created based on the supplied payload
+            identityAltReference:
+              type: string
+              description: >-
+                External identity unique reference generated by consumer's CRM system. This reference key will just be stored in the Oneoffice identity. There will be no searching to identify an existing identity in OneOffice based on this field
+            firstName:
+              type: string
+              description: >-
+                Mandatory field for creating an identity in OneOffice. First name of individual identity record
+            height:
+              format: double
+              type: number
+              description: >-
+                This represents height of the life entity in centimeters. Its required for Income Protection benefit types
+            initials:
+              type: string
+              description: >-
+                Initials of individual identity record 
+            lastName:
+              type: string
+              description: >-
+                Mandatory field for creating an identity in OneOffice. Last name of individual identity record    
+            tfn:
+              type: string
+              description: >-
+                Tax File Number of the identity record being referred
+            titleCode:
+              type: string
+              description: >-
+                Mandatory field for creating an identity in OneOffice. Title Code of life entity being provided. Valid title codes can be obtained from ReferenceData API
+            weight:
+              format: double
+              type: number
+              description: >-
+                This represents weight of the life entity in kilograms. Its required for Income Protection benefit types
+            contact:
+              $ref: '#/components/schemas/ContactModel'
+            residentialAddress:
+              $ref: '#/components/schemas/AddressModel'
+            postalAddress:
+              $ref: '#/components/schemas/AddressModel'
+           
+    IdentitySelectModel:
       type: object
       properties:
         identityType:
@@ -1238,34 +1644,57 @@ components:
           description: >-
             Mandatory field for creating an identity in OneOffice. First name of individual identity record
         gender:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the gender detail of the corresponding identity
         lastName:
           type: string
           description: >-
             Mandatory field for creating an identity in OneOffice. Last name of individual identity record    
         smokerStatus:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+             This depicts the smoker status of the associated life entity.
         title:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the title of the corresponding identity
+        relationship1:
+          allOf:        
+            - $ref: '#/components/schemas/RelationshipsModel'
+          description: >-
+            This represents list of relationship codes specified in a policy
         relationship:
           type: array
           description: >-
             This represents list of relationship codes specified in a policy
           items:
-            type: object
-            properties:
-              type:
-                $ref: '#/components/schemas/CodeDescriptionModel'
-                description: >-
-                  This represents the identity's relationship in a policy. e.g. * INSR - Life Insured * BENE - Beneficiary * CLNT - Policy Client
+            allOf:
+              - $ref: '#/components/schemas/CodeDescriptionModel'
+            description: >-
+              This represents the identity's relationship in a policy. e.g. * INSR - Life Insured * BENE - Beneficiary * CLNT - Policy Client
         benefit:
           type: array
           description: >-
             Mandatory for Life Insured Identity (relationshipCode = INSR). It provides the list of benefits against a life entity to get the
             pricing calculation. 
           items:
-            $ref: '#/components/schemas/BenefitFetchModel'        
+            $ref: '#/components/schemas/BenefitSelectBasicModel'        
     
+    BenefitsModel:
+      type: object
+      properties:
+        benefit:
+          type: array
+          description: >-
+            Mandatory for Life Insured Identity (relationshipCode = INSR). It provides the list of benefits against a life entity to get the
+            pricing calculation. 
+          items:
+            $ref: '#/components/schemas/BenefitModel'  
+      
     BenefitModel:
       type: object
       required:
@@ -1355,11 +1784,14 @@ components:
             This is only applicable to Income Protection benefits, it represents
             the waiting period before payments can be initiated
         
-    BenefitFetchModel:
+    BenefitSelectBasicModel:
       type: object
       properties:
         type:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the opted benefit type against the identity
         effectiveDate:
           description: >-
             This describes the effective date of the policy benefit
@@ -1386,20 +1818,419 @@ components:
           format: date
           type: string
         premiumType:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This field identify whether the premiums are levelled or stepped 
         status:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the current status of the benefit within the policy 
         statusDate:
           format: date-time
           type: string  
           description: >-
             This represents the date at which benefit status is changed         
-        
+            
+    ClaimSelectBasicModel:
+      type: object
+      properties:
+        claimDate:
+          description: >-
+            This represents the date when claim request is raised
+          format: date
+          type: string
+        claimAmount:
+          format: double
+          type: number
+          description: >-
+            Payment amount expected to be paid if the claim request approves
+        claimNo:
+          type: integer
+          format: int32
+          description: >-
+            A unique id associated with the claim request being raised 
+        identityId:
+          type: integer
+          format: int32
+          description: >-
+            OneOffice intneral identity to specify the life entity associated with specific claim request 
+        incident: 
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the incident code and description against the claim
+        paidAmount:
+          format: double
+          type: number
+          description: >-
+            Total payment amount for a specific claim request
+        status: 
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the current status of the claim 
+    
+    BenefitSelectModel:
+      type: object
+      properties:
+        identityId:
+          type: integer
+          format: int32
+          description: >-
+            OneOffice intneral identity to specify the life this benfit belongs to 
+        identityReference:
+          type: string
+          description: >-
+            External identity reference from consumer's system
+        effectiveDate:
+          description: >-
+            This describes the effective date of the policy benefit
+          format: date
+          type: string
+        endDate:
+          description: >-
+            This describes the end date date of the policy benefit
+          format: date
+          type: string
+        benefitSequence:
+          description: >-
+            To represent the whether the benefit record belongs to new business or additional business. Benefit sequence for new business is always 1 where as any additional business would created a new benefit record with an incremental benefit sequence    
+          type: integer
+        campaign:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This reflects the campaign specific details to which selected benefit belongs    
+        cancellationReason:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            To specify benefit cancellation reason against selected benefit    
+        claimDate:
+          description: >-
+            The date at which a claim was made for this risk record
+          format: date
+          type: string
+        creationReason:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            To specify benefit creation reason for selected benefit    
+        expiryDate:
+          description: >-
+            Indicates the  expiry  date of the policy benefit
+          format: date
+          type: string
+        isClaimRequested:
+          description: >-
+            Indicates a claim has been made against this risk
+          type: boolean  
+        isCPI:
+          description: >-
+            Indicates whether consumer protection index is selected for the benefit
+          type: boolean
+        isPremiumFreeze:
+          description: >-
+            Identifies if the benefit is currently impacted by 'premium freeze' requirements - i.e. on renewal the annual premium remains the same but the sum insured is decreased. Y - Premium Freeze applies. N - Premium Freeze does not apply
+          type: boolean
+        isPremiumPaused:
+          description: >-
+            Indicates if premium pause is active on the current benefit
+          type: boolean
+        isPremiumWaived:
+          description: >-
+            Indicates if the benefit is currently impacted by 'premium waiver' requirements i.e. this benefit is having its premium funded by 'waiver' type transactions. Y - On premium waiver, N - Not on premium waiver
+          type: boolean
+        originalCreationDate:
+          description: >-
+            This describes the date at which benefit is originally created during policy creation
+          format: date
+          type: string
+        originalEndDate:
+          description: >-
+            This describes a date when specific benefit is to be ended for first renewal 
+          format: date
+          type: string
+        originalIssueDate:
+          description: >-
+            This describes the date at which benefit is originally issued during its inception
+          format: date
+          type: string
+        originalStartDate:
+          description: >-
+            The start date of the current year's cover. It will be different for each benefit renewal
+          format: date
+          type: string
+        paidUptoDate: 
+          description: >-
+            The date till when the current benefit is paid
+          type: string
+          format: date
+        policyFeeStampDutyAmount:
+          format: double
+          type: number
+          description: >-
+            Stamp duty calculated on the policy benefit record
+        premiumPauseExpiryDate:
+          description: >-
+            This describes current premium pause period end date
+          format: date
+          type: string
+        premiumPauseStartDate:
+          description: >-
+            Current premium pause period start date
+          format: date
+          type: string
+        processCreatedBy:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This identifies the process which creates the selected benefit
+        status: 
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the current status of the benefit within the policy 
+        statusDate:
+          description: >-
+            Last status change date for selected benefit
+          format: date
+          type: string
+        registerState: 
+          type: string
+          description: >-
+            This specifies State details for the purpose of stamp duty calculation. This defaults to 'NSW' in
+            case not supplied
+        discounts:
+          allOf:
+            - $ref: '#/components/schemas/DiscountModel'
+          description: >-
+            This specifies discounts associated with the selected benefit 
+        loadings:
+          allOf:
+            - $ref: '#/components/schemas/LoadingModel'
+          description: >-
+            This specifies loading details associated with the selected benefit  
+        premiumComponents:
+          allOf:
+            - $ref: '#/components/schemas/PremiumComponentsModel'
+          description: >-
+            This specifies calculated premium related components for selected benefit 
+        ratingFactors:
+          allOf:
+            - $ref: '#/components/schemas/RatingFactorModel'
+          description: >-
+            This specifies rating factors associated with the selected benefit  
+        reinsurance:
+          allOf:
+            - $ref: '#/components/schemas/ReinsuranceModel'
+          description: >-
+            This specifies reinsurance details associated with the selected benefit      
+            
+
+    LoadingModel:
+      type: object
+      properties:
+        medicalLoadingPercent:
+          format: double
+          type: number
+          description: >-
+            To specify medical loading perentage applicable to the specific benefit
+        medicalPerMilleLoadingAmount:
+          format: double
+          type: number
+          description: >-
+            To specify medical per mille loading amount applicable to the specific benefit  
+        medicalPerMilleLoadingDuration:
+          description: >-
+            This represent the medical per mille loading duration in years
+          type: integer
+        occupationalLoadingPercent:
+          format: double
+          type: number
+          description: >-
+            To specify occupational loading perentage applicable to the specific benefit
+        occupationalPerMilleLoadingAmount:
+          format: double
+          type: number
+          description: >-
+            To specify occupational per mille loading perentage applicable to the specific benefit
+        occupationalPerMilleLoadingDuration:
+          description: >-
+            This represent the occupational per mille loading duration in years
+          type: integer
+        recreationalLoadingPercent: 
+          format: double
+          type: number
+          description: >-
+            To specify recreational loading perentage applicable to the specific benefit          
+        recreationalPerMilleLoadingAmount:
+          format: double
+          type: number
+          description: >-
+            To specify recreational per mille loading amount applicable to the specific benefit  
+        recreationalPerMilleLoadingDuration:
+          description: >-
+           This represent the recreational per mille loading duration in years 
+          type: integer
+    
+    DiscountModel:
+      type: object
+      properties:
+        decreasingDiscountPercent:
+          format: double
+          type: number
+          description: >-
+            To specify discount percentage being decreased
+        expenseDiscountPercent:
+          format: double
+          type: number
+          description: >-
+            To specify expense discount percentage    
+        negotiationPerMilleDiscountAmount:
+          format: double
+          type: number
+          description: >-
+            To specify the negotiated discount against per mille loading 
+        noClaimDiscountPercent:
+          format: double
+          type: number
+          description: >-
+            To specify the discount percentage applied to benefit for no claim cases
+        noClaimDiscountStartDate:
+          description: >-
+            Start date of current ‘No claim’ discount period. This date is reset if a claim or premium pause event occurs (if configured to do so)
+          format: date
+          type: string      
+        policyFeeNegotiationDiscountPercent:
+          format: double
+          type: number
+          description: >-
+            A value captured in benefit maintenance that is applied to the policy fee during the premium calculation
+        riskDiscountPercent:
+          format: double
+          type: number
+          description: >-
+            A value captured in benefit maintenance that is applied during the premium calculation
+            
+    ReinsuranceModel:
+      type: object
+      properties:
+        assessmentReferenceNo:
+          description: >-
+            This reinsurance assessment number 
+          type: string
+        plan:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This is used to identify a particular reinsurance treaty or facultative arrangement
+        proportionPercentage:
+          description: >-
+            This Reinsurer’s percentage share of the sum reinsured with the associated sum reinsured band
+          format: double
+          type: number
+        retainedSumInsuredAmount:
+          format: double
+          type: number
+          description: >-
+            The amount of the sum insured that is retained by the life company. The remainder is reinsured
+            
+    RatingFactorModel:
+      type: object
+      properties:
+        benefitIndexation:
+          description: >-
+            Benefit index ( for income protection only)
+          type: string
+        benefitPeriod:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the benefit period code and description for selected benefit 
+        dateOfBirth:
+          description: >-
+            This identifies date of birth of the life insured within the selected benefit
+          type: string
+          format: date
+        employmentStatus:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            To specify employment status details specified in the selected benefit  
+        gender:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            Gender code and description specified in selected benefit 
+        occupation:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            Occupation being specified in the selected benefit
+        occupationCategory:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            The occupation category being specified in the selected benefit
+        premiumType:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This field identify whether the premiums are levelled, stepped or hybrid. Following values are expected * L - Level * S - Stepped
+        seriesCode:  
+          description: >-
+            Series code specified at policy creation
+          type: string
+        smoker:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This identifies the smoker status of life insured against selected benefit    
+        sumInsuredAmount:
+          format: double
+          type: number
+          description: >-
+            Total sum insured amount against the selected benefit 
+        type:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the benefit code and description for selected benefit 
+        waitingPeriod:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This is only applicable to Income Protection benefits, it represents waiting period before payments can be initiated      
+            
+    PremiumComponentsModel:
+      type: object
+      properties:
+        annualPremiumAmount:
+          format: double
+          type: number
+          description: >-
+            Calculated annual premium amount per benefit
+        annualStampDutyAmount:
+          format: double
+          type: number
+          description: >-
+            Calculated stamp duty amount per benefit
+        modalPremiumAmount:
+          format: double
+          type: number
+          description: >-
+            Calculated premium amount for each payment frequency
     SegmentModel:
       type: object
       properties:
         segmentType:
-          $ref: '#/components/schemas/CodeDescriptionModel'
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents the segment type i.e. Assetless Segment, SuperContribution  
         segmentBalance:
           format: double
           type: number
@@ -1419,8 +2250,9 @@ components:
         bankBSB:
           type: string
           description: >-
-            Mandatory in case payment type being bank account (paymentType = B). Specify 6 digit BSB code.
-            Bank name will be identified based on the provided BSB
+            Mandatory in case payment type being bank account (paymentType = B). Bank name will be identified based on the provided BSB. Valid BSB should be in 
+            'ddd-ddd' format (e.g. 123-456) 
+          pattern: '^(\d){3}-(\d){3}$'
         accountName:
           type: string
           description: >-
@@ -1536,9 +2368,48 @@ components:
                 $ref: '#/components/schemas/PolicyCreationResult'
         metadata:
           $ref: '#/components/schemas/GenericErrorModel'
-    
-    
-          
+
+    PaymentResponseModel:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/PaymentModel'  
+        metadata:
+          $ref: '#/components/schemas/GenericErrorModel'      
+              
+    PaymentModel:
+      type: object
+      properties:
+        policyNumber:
+          description: >-
+            OneOffice policy number being passed in the request for co-relation purpose
+          type: string
+        balanceBefore:
+          description: >-
+            Original segment balance amount available to the policy before this transaction  
+          type: number
+          format: double
+        balanceAfter:
+          description: >-
+            Modified segment balance amount available after performing this transaction   
+          type: number
+          format: double
+        paidToDateBefore:
+          description: >-
+            The current paid to date of specific policy in the system
+          format: date
+          type: string
+        paidToDateAfter:
+          description: >-
+            The final paid to date being calculated by system after running charges based on amount paid
+          format: date
+          type: string  
+        nextDebitDate:
+          description: >-
+            Next debit date reflects the updated period debit date updated in the system as a result of this transaction 
+          format: date
+          type: string
+       
     PolicyCreationResult:
       type: object
       properties:
@@ -1677,8 +2548,7 @@ components:
           $ref: '#/components/schemas/TokenModel'
         metadata:
           $ref: '#/components/schemas/GenericErrorModel'
-          
-            
+
     TokenModel:
       type: object
       properties:    
@@ -1716,40 +2586,6 @@ components:
           format: date
           type: string
     
-    PaymentModel:
-      type: object
-      properties:
-        policyNumber:
-          description: >-
-            OneOffice policy number being passed in the request for coorelation purpose
-          type: string
-        balanceBefore:
-          description: >-
-            Original segment balance amount available to the policy before this transaction  
-          type: number
-          format: double
-        balanceAfter:
-          description: >-
-            Modified segment balance amount available after performing this transaction   
-          type: number
-          format: double
-        paidToDateBefore:
-          description: >-
-            The current paid to date of specific policy in the system
-          format: date
-          type: string
-        paidToDateAfter:
-          description: >-
-            The final paid to date being calculated by system after running charges based on amount paid
-          format: date
-          type: string  
-        nextDebitDate:
-          description: >-
-            Next debit date reflects the updated period debit date updated in the system as a result of this transaction 
-          format: date
-          type: string
-       
-  
     GenericResponseModel:
       type: object
       properties:
@@ -1757,6 +2593,78 @@ components:
           type: object
         metadata:
           $ref: '#/components/schemas/GenericErrorModel'
+          
+    PaymentHistoryResponseModel:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentHistoryModel'  
+        metadata:
+          $ref: '#/components/schemas/GenericErrorModel'  
+    
+    PaymentHistoryModel:
+      type: object
+      properties:
+        accountFrom:
+          allOf:  
+            - $ref: '#/components/schemas/AccountModel'
+          description: >-
+            From Account details
+        accountTo:
+          allOf:  
+            - $ref: '#/components/schemas/AccountModel'
+          description: >-
+            To Account details
+        claimNo:
+          description: >-
+            This describes the claim no to identify the claim speficic payments
+          type: integer
+        deductionDate:
+          description: >-
+            This describes the deduction date of payment from source
+          format: date
+          type: string
+        effectiveDate:
+          description: >-
+            This describes the effective date of the payment
+          format: date
+          type: string
+        paymentAmount:
+          format: double
+          type: number
+          description: >-
+            To specify the payment amount against each payment record 
+        paymentType:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This depicts the type of payment i.e. debit / credit 
+        referenceNo:
+          description: >-
+            This specifies the payment reference no
+          type: integer        
+        reversalDate:
+          description: >-
+            This describes the reversal date of the payment
+          format: date
+          type: string          
+        source:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            Source of payment to further sub-classify the payment type
+        status:
+          allOf:
+            - $ref: '#/components/schemas/CodeDescriptionModel'
+          description: >-
+            This represents status of the payment 
+        statusDate:
+          format: date
+          type: string  
+          description: >-
+            This represents the payment status change date   
           
   responses:
     '400BadRequest':
@@ -1786,6 +2694,21 @@ components:
                     metadata:
                       status: Failure
                       errors: []              
+    
+     
+    '404NotFound':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponseModel'
+              examples:
+                response:
+                  value:
+                    data: {}
+                    metadata:
+                      status: Failure
+                      errors: []                                
     
     '500InternalError':
         description: Internal Server Error
